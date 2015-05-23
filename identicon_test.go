@@ -5,26 +5,55 @@
 package identicon
 
 import (
+	"image"
 	"image/color"
 	"image/png"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/issue9/assert"
 )
 
-// func Make(fore, back color.NRGBA, size int, data []byte) (image.Image, error) {
-func TestMake(t *testing.T) {
+// 依次画出各个网络的图像。
+func TestBlocks(t *testing.T) {
+	back := color.RGBA{255, 0, 0, 100}
+	fore := color.RGBA{0, 255, 255, 100}
+	p := []color.Color{back, fore}
+
 	a := assert.New(t)
 
-	img, err := Make(color.NRGBA{12, 200, 12, 100}, color.NRGBA{0, 0, 0, 100}, 64, []byte("xnotepad.com"))
-	a.NotError(err).NotNil(img)
+	for k, v := range blocks {
+		img := image.NewPaletted(image.Rect(0, 0, 128*4, 128), p) // 横向4张图片大小
 
-	fi, err := os.Create("./testdata/md5-" + "caixw.png")
-	a.NotError(err).NotNil(fi)
-	defer func() {
-		a.NotError(fi.Close())
-	}()
+		for i := 0; i < 4; i++ {
+			v(img, float64(i*128), 0, 128, int8(i))
+		}
 
-	a.NotError(png.Encode(fi, img))
+		fi, err := os.Create("./testdata/block-" + strconv.Itoa(k) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
+}
+
+// 产生一组测试图片
+func TestDraw(t *testing.T) {
+	a := assert.New(t)
+	size := 128
+	back := color.NRGBA{200, 200, 200, 100}
+	fore := color.NRGBA{238, 51, 36, 100}
+
+	for i := 0; i < 20; i++ {
+		p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
+		c := (i + 1) % len(centerBlocks)
+		b1 := (i + 2) % len(blocks)
+		b2 := (i + 3) % len(blocks)
+		draw(p, size, centerBlocks[c], blocks[b1], blocks[b2], 0)
+
+		fi, err := os.Create("./testdata/draw-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, p))
+		a.NotError(fi.Close()) // 关闭文件
+	}
 }

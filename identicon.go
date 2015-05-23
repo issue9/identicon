@@ -13,69 +13,90 @@ import (
 )
 
 const (
-	maxSize = 256
 	minSize = 16
 )
 
 type Identicon struct {
-	fore, back     color.Color
-	size, gridSize int
+	fore, back color.Color
+	size       int
 }
 
 // size九宫格中每个格子的像素
-func New(foreground, background color.Color, gridSize int) (*Identicon, error) {
-	size := gridSize * 3
-	if size > maxSize || size < minSize {
-		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能大于%v也不能小于%v", size, maxSize, minSize)
+func New(back, fore color.Color, size int) (*Identicon, error) {
+	if size < minSize {
+		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
 	}
 
 	return &Identicon{
-		fore:     foreground,
-		back:     background,
-		size:     size,
-		gridSize: gridSize,
+		fore: fore,
+		back: back,
+		size: size,
 	}, nil
 }
 
-func (i *Identicon) Make(data []byte) (image.Image, error) {
-	return nil, nil
+func (i *Identicon) Make(data []byte) image.Image {
+	return makeImage(i.back, i.fore, i.size, data)
 }
 
-func Make(fore, back color.NRGBA, size int, data []byte) (image.Image, error) {
+func Make(back, fore color.Color, size int, data []byte) (image.Image, error) {
+	if size < minSize {
+		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
+	}
+
+	return makeImage(back, fore, size, data), nil
+}
+
+func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
 	sum := h.Sum(nil)
-	g1 := blocks[int(sum[0]+sum[1]+sum[2]+sum[3])%len(blocks)]                 // 第一个方块
-	g2 := blocks[int(sum[4]+sum[5]+sum[6]+sum[7])%len(blocks)]                 // 第二个方块
-	c := centerBlocks[int(sum[8]+sum[9]+sum[10]+sum[11])%len(centerBlocks)]    // 中间方块
-	angle := int8(math.Abs(float64(int(sum[12]+sum[13]+sum[14]+sum[15]) % 4))) // 旋转角度
+
+	// 第一个方块
+	index := int(math.Abs(float64(sum[0]+sum[1]+sum[2]+sum[3]))) % len(blocks)
+	b1 := blocks[index]
+
+	// 第二个方块
+	index = int(math.Abs(float64(sum[4]+sum[5]+sum[6]+sum[7]))) % len(blocks)
+	b2 := blocks[index]
+
+	// 中间方块
+	index = int(math.Abs(float64(sum[8]+sum[9]+sum[10]+sum[11]))) % len(centerBlocks)
+	c := centerBlocks[index]
+
+	// 旋转角度
+	angle := int8(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
 	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
-	gridSize := float64(size / 3)
-	c(p, gridSize, gridSize, gridSize, 0)
-
-	angle = angleIncr(angle)
-	g1(p, 0, 0, gridSize, angle)
-	g2(p, gridSize, 0, gridSize, angle)
-
-	angle = angleIncr(angle)
-	g1(p, 2*gridSize, 0, gridSize, angleIncr(angle))
-	g2(p, 2*gridSize, gridSize, gridSize, angleIncr(angle))
-
-	angle = angleIncr(angle)
-	g1(p, 2*gridSize, 2*gridSize, gridSize, angleIncr(angle))
-	g2(p, gridSize, 2*gridSize, gridSize, angleIncr(angle))
-
-	angle = angleIncr(angle)
-	g1(p, 0, 2*gridSize, gridSize, angleIncr(angle))
-	g2(p, 0, gridSize, gridSize, angleIncr(angle))
-
-	return p, nil
+	draw(p, size, c, b1, b2, angle)
+	return p
 }
 
-func angleIncr(angle int8) int8 {
-	if angle > 2 { // 如果已经为3，必须重置为0
-		return 0
+// 将完整的头像画到p上。
+func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int8) {
+	blockSize := float64(size / 3) // 每个格子的长宽
+
+	incr := func() { // 增加angle的值，但不会大于3
+		if angle > 2 {
+			angle = 0
+		} else {
+			angle++
+		}
 	}
-	return angle + 1
+
+	c(p, blockSize, blockSize, blockSize, 0)
+
+	b1(p, 0, 0, blockSize, angle)
+	b2(p, blockSize, 0, blockSize, angle)
+
+	incr()
+	b1(p, 2*blockSize, 0, blockSize, angle)
+	b2(p, 2*blockSize, blockSize, blockSize, angle)
+
+	incr()
+	b1(p, 2*blockSize, 2*blockSize, blockSize, angle)
+	b2(p, blockSize, 2*blockSize, blockSize, angle)
+
+	incr()
+	b1(p, 0, 2*blockSize, blockSize, angle)
+	b2(p, 0, blockSize, blockSize, angle)
 }
