@@ -2,11 +2,14 @@ identicon [![Build Status](https://travis-ci.org/issue9/identicon.svg?branch=mas
 ======
 
 为用户产生漂亮的随机头像。
+
 ![screenhost.1](https://raw.github.com/issue9/identicon/master/screenshot/1.png)
 ![screenhost.2](https://raw.github.com/issue9/identicon/master/screenshot/2.png)
 ![screenhost.3](https://raw.github.com/issue9/identicon/master/screenshot/3.png)
 ![screenhost.4](https://raw.github.com/issue9/identicon/master/screenshot/4.png)
 ![screenhost.5](https://raw.github.com/issue9/identicon/master/screenshot/5.png)
+![screenhost.6](https://raw.github.com/issue9/identicon/master/screenshot/6.png)
+![screenhost.7](https://raw.github.com/issue9/identicon/master/screenshot/7.png)
 
 ```go
 //  // 根据用户访问的IP，为其生成一张头像

@@ -84,3 +84,12 @@ func TestIdenticon(t *testing.T) {
 	a.NotError(png.Encode(fi, img))
 	a.NotError(fi.Close()) // 关闭文件
 }
+
+func BenchmarkMake(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		img, err := Make(back, fore, size, []byte("Make"))
+		if err != nil || img == nil {
+			b.Error("BenchmarkMake:Make时发生错误")
+		}
+	}
+}
