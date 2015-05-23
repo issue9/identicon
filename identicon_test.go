@@ -85,6 +85,7 @@ func TestIdenticon(t *testing.T) {
 	a.NotError(fi.Close()) // 关闭文件
 }
 
+// BenchmarkMake	     200	   7281732 ns/op
 func BenchmarkMake(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		img, err := Make(back, fore, size, []byte("Make"))
