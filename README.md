@@ -1,7 +1,7 @@
 identicon [![Build Status](https://travis-ci.org/issue9/identicon.svg?branch=master)](https://travis-ci.org/issue9/identicon)
 ======
 
-为用户产生漂亮的随机头像。
+根据用户的IP、邮箱名等任意数据为用户产生漂亮的随机头像。
 
 ![screenhost.1](https://raw.github.com/issue9/identicon/master/screenshot/1.png)
 ![screenhost.4](https://raw.github.com/issue9/identicon/master/screenshot/4.png)
