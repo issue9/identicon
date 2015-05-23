@@ -1,31 +1,24 @@
 identicon [![Build Status](https://travis-ci.org/issue9/identicon.svg?branch=master)](https://travis-ci.org/issue9/identicon)
 ======
 
+为用户产生漂亮的随机头像。
+![screenhost.1](https://raw.github.com/issue9/identicon/master/screenshot/1.png)
+![screenhost.2](https://raw.github.com/issue9/identicon/master/screenshot/2.png)
+![screenhost.3](https://raw.github.com/issue9/identicon/master/screenshot/3.png)
+![screenhost.4](https://raw.github.com/issue9/identicon/master/screenshot/4.png)
+![screenhost.5](https://raw.github.com/issue9/identicon/master/screenshot/5.png)
+
 ```go
-type User struct {
-    // 对应表中的id字段，为自增列，从0开始
-    Id          int64      `identicon:"name(id);ai(0);"`
-    // 对应表中的first_name字段，为索引index_name的一部分
-    FirstName   string     `identicon:"name(first_name);index(index_name)"`
-    LastName    string     `identicon:"name(first_name);index(index_name)"`
-}
-
-// 创建User表
-e.Create(&User{})
-
-// 更新id为1的记录
-e.Update(&User{Id:1,FirstName:"abc"})
-e.Where("id=?", 1).Table("#tbl_name").Update(true, "FirstName", "abc")
-
-// 删除id为1的记录
-e.Delete(&User{Id:1})
-e.Where("id=?", 1).Table("#tbl_name").Delete(true, []interface{}{"id":1})
-
-// 插入数据
-e.Insert(&User{FirstName:"abc"})
-
-// 查找数据
-maps,err := e.Where("id<?", 5).Table("#tbl_name").SelectMap(true, "*")
+//  // 根据用户访问的IP，为其生成一张头像
+//  img, _ := identicon.Make(color.NRGBA{},color.NRGBA{}, 128, []byte("192.168.1.1"))
+//  fi, _ := os.Create("/tmp/u1.png")
+//  png.Encode(fi, img)
+//  fi.Close()
+//
+//  // 或者
+//  ii, _ := identicon.New(color.NRGBA{}, color.NGRGA{}, 128)
+//  img := ii.Make([]byte("192.168.1.1"))
+//  img = ii.Make([]byte("192.168.1.2"))
 ```
 
 ### 安装

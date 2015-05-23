@@ -16,12 +16,15 @@ const (
 	minSize = 16
 )
 
+// Identicon 用于产生统一颜色和尺寸的头像。
 type Identicon struct {
 	fore, back color.Color
 	size       int
 }
 
-// size九宫格中每个格子的像素
+// 声明一个Identicon实例。
+// back, fore表示头像的背景和前景色。
+// size表示整个头像的大小。
 func New(back, fore color.Color, size int) (*Identicon, error) {
 	if size < minSize {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
@@ -34,10 +37,14 @@ func New(back, fore color.Color, size int) (*Identicon, error) {
 	}, nil
 }
 
+// 根据data数据产生一张唯一性的头像图片。
 func (i *Identicon) Make(data []byte) image.Image {
 	return makeImage(i.back, i.fore, i.size, data)
 }
 
+// 根据data数据产生一张唯一性的头像图片。
+// back, fore头像的背景和前景色。
+// size 头像的大小。
 func Make(back, fore color.Color, size int, data []byte) (image.Image, error) {
 	if size < minSize {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
@@ -64,7 +71,7 @@ func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 	c := centerBlocks[index]
 
 	// 旋转角度
-	angle := int8(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
+	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
 	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
 	draw(p, size, c, b1, b2, angle)
@@ -72,7 +79,7 @@ func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 }
 
 // 将完整的头像画到p上。
-func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int8) {
+func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	blockSize := float64(size / 3) // 每个格子的长宽
 
 	incr := func() { // 增加angle的值，但不会大于3

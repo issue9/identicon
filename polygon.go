@@ -11,7 +11,7 @@ var (
 
 // 将x,y以x0,y0为原点旋转angle个角度。
 // angle取值只能是[0,1,2,3]，分别表示[0，90，180，270]
-func rotate(x, y, x0, y0 float64, angle int8) (x1, y1 float64) {
+func rotate(x, y, x0, y0 float64, angle int) (x1, y1 float64) {
 	if angle > 3 {
 		panic("angle必须0,1,2,3三值之一")
 	}
