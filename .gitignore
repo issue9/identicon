@@ -28,3 +28,5 @@ _testmain.go
 
 #osx
 .DS_Store
+
+testdata
