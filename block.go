@@ -102,10 +102,11 @@ func b3(img *image.Paletted, x, y, size float64, angle int) {
 	m := size / 2
 	points := pool.Get().([]float64)[:0]
 	points = append(points,
-		x+m,
-		y, x+size,
-		y+m, x+m,
-		y+size, x, y+m,
+		x+m, y,
+		x+size, y+m,
+		x+m, y+size,
+		x, y+m,
+		x+m, y,
 	)
 
 	for i := x; i < x+size; i++ {
@@ -134,6 +135,7 @@ func b4(img *image.Paletted, x, y, size float64, angle int) {
 		x, y,
 		x+size, y,
 		x, y+size,
+		x, y,
 	))
 
 	pool.Put(points)
@@ -154,6 +156,7 @@ func b5(img *image.Paletted, x, y, size float64, angle int) {
 		x+size,
 		y+size,
 		x, y+size,
+		x+m, y,
 	))
 
 	pool.Put(points)
@@ -174,6 +177,7 @@ func b6(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x+m, y+size,
 		x, y+size,
+		x, y,
 	))
 
 	pool.Put(points)
@@ -195,6 +199,7 @@ func b7(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+m,
 		x+size, y+size,
 		x+m, y+size,
+		x, y,
 	))
 
 	pool.Put(points)
@@ -220,6 +225,7 @@ func b8(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x+3*mm, y+m,
 		x+mm, y+m,
+		x+m, y,
 	))
 
 	// 底下左边
@@ -227,6 +233,7 @@ func b8(img *image.Paletted, x, y, size float64, angle int) {
 		x+mm, y+m,
 		x+m, y+size,
 		x, y+size,
+		x+mm, y+m,
 	))
 
 	// 底下右边
@@ -234,6 +241,7 @@ func b8(img *image.Paletted, x, y, size float64, angle int) {
 		x+3*mm, y+m,
 		x+size, y+size,
 		x+m, y+size,
+		x+3*mm, y+m,
 	))
 
 	pool.Put(points)
@@ -255,6 +263,7 @@ func b9(img *image.Paletted, x, y, size float64, angle int) {
 		x, y,
 		x+size, y+m,
 		x+m, y+size,
+		x, y,
 	))
 
 	pool.Put(points)
@@ -279,12 +288,14 @@ func b10(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x+size, y,
 		x+m, y+m,
+		x+m, y,
 	))
 
 	drawBlock(img, x, y, size, angle, append(points[:0],
 		x, y+m,
 		x+m, y+m,
 		x, y+size,
+		x, y+m,
 	))
 
 	pool.Put(points)
@@ -307,6 +318,7 @@ func b11(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x+m, y+m,
 		x, y+m,
+		x, y,
 	))
 
 	pool.Put(points)
@@ -328,6 +340,7 @@ func b12(img *image.Paletted, x, y, size float64, angle int) {
 		x, y+m,
 		x+size, y+m,
 		x+m, y+size,
+		x, y+m,
 	))
 
 	pool.Put(points)
@@ -349,6 +362,7 @@ func b13(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y+m,
 		x+size, y+size,
 		x, y+size,
+		x+m, y+m,
 	))
 
 	pool.Put(points)
@@ -370,6 +384,7 @@ func b14(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x+m, y+m,
 		x, y+m,
+		x+m, y,
 	))
 
 	pool.Put(points)
@@ -391,6 +406,7 @@ func b15(img *image.Paletted, x, y, size float64, angle int) {
 		x, y,
 		x+m, y,
 		x, y+m,
+		x, y,
 	))
 
 	pool.Put(points)

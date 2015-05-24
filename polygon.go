@@ -26,7 +26,7 @@ func rotate(points []float64, x, y float64, angle int) {
 
 // 判断某个点是否在多边形之内，不包含构成多边形的线和点
 // x,y 需要判断的点坐标
-// points 组成多边形的所顶点
+// points 组成多边形的所顶点，最后一个点必须与第一个点相同。
 func pointInPolygon(x float64, y float64, points []float64) bool {
 	if len(points) < 6 { // 顶点数量少于3个，肯定无法合并
 		return false
@@ -41,8 +41,6 @@ func pointInPolygon(x float64, y float64, points []float64) bool {
 	// 结果为：2==abs(r)。
 
 	r := 0
-	points = append(points, points[0], points[1]) // 将起始点放入尾部，形成一个闭合区域
-
 	x1, y1 := points[0], points[1]
 	prev := (y1 > y) || ((x1 > x) && (y1 == y))
 	for i := 2; i < len(points); i += 2 {
