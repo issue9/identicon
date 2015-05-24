@@ -6,10 +6,12 @@ package identicon
 
 import (
 	"image"
+	"sync"
 )
 
-// 所有block函数的类型
-type blockFunc func(img *image.Paletted, x, y, size float64, angle int)
+var pool = sync.Pool{
+	New: func() interface{} { return make([]float64, 0, 10) },
+}
 
 var (
 	// 可以出现在中间的方块，一般为了美观，都是对称图像。
@@ -18,6 +20,9 @@ var (
 	// 所有方块
 	blocks = []blockFunc{b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15}
 )
+
+// 所有block函数的类型
+type blockFunc func(img *image.Paletted, x, y, size float64, angle int)
 
 // 将多边形points旋转angle个角度，然后输出到img上，起点为x,y坐标
 func drawBlock(img *image.Paletted, x, y, size float64, angle int, points []float64) {
@@ -121,12 +126,12 @@ func b3(img *image.Paletted, x, y, size float64, angle int) {
 //  |#    |
 //  |------
 func b4(img *image.Paletted, x, y, size float64, angle int) {
-	points := []float64{
+	points := pool.Get().([]float64)[:0]
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + size, y,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+size, y,
+		x, y+size,
+	))
 }
 
 // b5
@@ -137,13 +142,14 @@ func b4(img *image.Paletted, x, y, size float64, angle int) {
 //  | ##### |
 //  |#######|
 func b5(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
-		x + m, y,
-		x + size, y + size,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y,
+		x+size,
+		y+size,
+		x, y+size,
+	))
 }
 
 // b6 矩形
@@ -154,14 +160,14 @@ func b5(img *image.Paletted, x, y, size float64, angle int) {
 //  |###   |
 //  --------
 func b6(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + m, y,
-		x + m, y + size,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+m, y,
+		x+m, y+size,
+		x, y+size,
+	))
 }
 
 // b7 斜放的锥形
@@ -173,14 +179,14 @@ func b6(img *image.Paletted, x, y, size float64, angle int) {
 //  |   ####|
 //  |--------
 func b7(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + size, y + m,
-		x + size, y + size,
-		x + m, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+size, y+m,
+		x+size, y+size,
+		x+m, y+size,
+	))
 }
 
 // b8 三个堆叠的三角形
@@ -194,31 +200,30 @@ func b7(img *image.Paletted, x, y, size float64, angle int) {
 //  |#########|
 //  -----------
 func b8(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
 	mm := m / 2
 
 	// 顶部三角形
-	points := []float64{
-		x + m, y,
-		x + 3*mm, y + m,
-		x + mm, y + m,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y,
+		x+3*mm, y+m,
+		x+mm, y+m,
+	))
 
 	// 底下左边
-	points = []float64{x + mm, y + m,
-		x + m, y + size,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points[:0],
+		x+mm, y+m,
+		x+m, y+size,
+		x, y+size,
+	))
 
 	// 底下右边
-	points = []float64{
-		x + 3*mm, y + m,
-		x + size, y + size,
-		x + m, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points[:0],
+		x+3*mm, y+m,
+		x+size, y+size,
+		x+m, y+size,
+	))
 }
 
 // b9 斜靠的三角形
@@ -231,13 +236,13 @@ func b8(img *image.Paletted, x, y, size float64, angle int) {
 //  |   #   |
 //  ---------
 func b9(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + size, y + m,
-		x + m, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+size, y+m,
+		x+m, y+size,
+	))
 }
 
 // b10
@@ -253,20 +258,19 @@ func b9(img *image.Paletted, x, y, size float64, angle int) {
 //  |#       |
 //  ----------
 func b10(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
-		x + m, y,
-		x + size, y,
-		x + m, y + m,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y,
+		x+size, y,
+		x+m, y+m,
+	))
 
-	points = []float64{
-		x, y + m,
-		x + m, y + m,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points[:0],
+		x, y+m,
+		x+m, y+m,
+		x, y+size,
+	))
 }
 
 // b11 左上角1/4大小的方块
@@ -279,14 +283,14 @@ func b10(img *image.Paletted, x, y, size float64, angle int) {
 //  |        |
 //  ----------
 func b11(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + m, y,
-		x + m, y + m,
-		x, y + m,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+m, y,
+		x+m, y+m,
+		x, y+m,
+	))
 }
 
 // b12
@@ -299,13 +303,13 @@ func b11(img *image.Paletted, x, y, size float64, angle int) {
 //  |    #    |
 //  -----------
 func b12(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
-		x, y + m,
-		x + size, y + m,
-		x + m, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x, y+m,
+		x+size, y+m,
+		x+m, y+size,
+	))
 }
 
 // b13
@@ -318,13 +322,13 @@ func b12(img *image.Paletted, x, y, size float64, angle int) {
 //  |#########|
 //  -----------
 func b13(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
-		x + m, y + m,
-		x + size, y + size,
-		x, y + size,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y+m,
+		x+size, y+size,
+		x, y+size,
+	))
 }
 
 // b14
@@ -337,13 +341,13 @@ func b13(img *image.Paletted, x, y, size float64, angle int) {
 //  |       |
 //  ---------
 func b14(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
-		x + m, y,
-		x + m, y + m,
-		x, y + m,
-	}
-	drawBlock(img, x, y, size, angle, points)
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y,
+		x+m, y+m,
+		x, y+m,
+	))
 }
 
 // b15
@@ -356,11 +360,11 @@ func b14(img *image.Paletted, x, y, size float64, angle int) {
 //  |        |
 //  ----------
 func b15(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
 	m := size / 2
-	points := []float64{
+	drawBlock(img, x, y, size, angle, append(points,
 		x, y,
-		x + m, y,
-		x, y + m,
-	}
-	drawBlock(img, x, y, size, angle, points)
+		x+m, y,
+		x, y+m,
+	))
 }
