@@ -28,7 +28,7 @@ func rotate(points []float64, x, y float64, angle int) {
 // x,y 需要判断的点坐标
 // points 组成多边形的所顶点
 func pointInPolygon(x float64, y float64, points []float64) bool {
-	if len(points) < 5 { // 顶点数量少于3个，肯定无法合并
+	if len(points) < 6 { // 顶点数量少于3个，肯定无法合并
 		return false
 	}
 

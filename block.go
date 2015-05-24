@@ -68,7 +68,7 @@ func b1(img *image.Paletted, x, y, size float64, angle int) {
 	}
 }
 
-// 中间小空白
+// 中间小方块
 //  ----------
 //  |        |
 //  |  ####  |
@@ -100,12 +100,13 @@ func b2(img *image.Paletted, x, y, size float64, angle int) {
 //  ---------
 func b3(img *image.Paletted, x, y, size float64, angle int) {
 	m := size / 2
-	points := []float64{
-		x + m,
-		y, x + size,
-		y + m, x + m,
-		y + size, x, y + m,
-	}
+	points := pool.Get().([]float64)[:0]
+	points = append(points,
+		x+m,
+		y, x+size,
+		y+m, x+m,
+		y+size, x, y+m,
+	)
 
 	for i := x; i < x+size; i++ {
 		for j := y; j < y+size; j++ {
@@ -114,6 +115,8 @@ func b3(img *image.Paletted, x, y, size float64, angle int) {
 			}
 		}
 	}
+
+	pool.Put(points)
 }
 
 // b4
@@ -132,6 +135,8 @@ func b4(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y,
 		x, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b5
@@ -150,6 +155,8 @@ func b5(img *image.Paletted, x, y, size float64, angle int) {
 		y+size,
 		x, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b6 矩形
@@ -168,6 +175,8 @@ func b6(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y+size,
 		x, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b7 斜放的锥形
@@ -187,6 +196,8 @@ func b7(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+size,
 		x+m, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b8 三个堆叠的三角形
@@ -224,6 +235,8 @@ func b8(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+size,
 		x+m, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b9 斜靠的三角形
@@ -243,6 +256,8 @@ func b9(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+m,
 		x+m, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b10
@@ -271,6 +286,8 @@ func b10(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y+m,
 		x, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b11 左上角1/4大小的方块
@@ -291,6 +308,8 @@ func b11(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y+m,
 		x, y+m,
 	))
+
+	pool.Put(points)
 }
 
 // b12
@@ -310,6 +329,8 @@ func b12(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+m,
 		x+m, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b13
@@ -329,6 +350,8 @@ func b13(img *image.Paletted, x, y, size float64, angle int) {
 		x+size, y+size,
 		x, y+size,
 	))
+
+	pool.Put(points)
 }
 
 // b14
@@ -348,6 +371,8 @@ func b14(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y+m,
 		x, y+m,
 	))
+
+	pool.Put(points)
 }
 
 // b15
@@ -367,4 +392,6 @@ func b15(img *image.Paletted, x, y, size float64, angle int) {
 		x+m, y,
 		x, y+m,
 	))
+
+	pool.Put(points)
 }
