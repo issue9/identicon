@@ -74,6 +74,7 @@ func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
 	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
+
 	draw(p, size, c, b1, b2, angle)
 	return p
 }
@@ -81,6 +82,7 @@ func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 // 将完整的头像画到p上。
 func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	blockSize := float64(size / 3) // 每个格子的长宽
+	twoBlockSize := 2 * blockSize
 
 	incr := func() { // 增加angle的值，但不会大于3
 		if angle > 2 {
@@ -96,14 +98,14 @@ func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	b2(p, blockSize, 0, blockSize, angle)
 
 	incr()
-	b1(p, 2*blockSize, 0, blockSize, angle)
-	b2(p, 2*blockSize, blockSize, blockSize, angle)
+	b1(p, twoBlockSize, 0, blockSize, angle)
+	b2(p, twoBlockSize, blockSize, blockSize, angle)
 
 	incr()
-	b1(p, 2*blockSize, 2*blockSize, blockSize, angle)
-	b2(p, blockSize, 2*blockSize, blockSize, angle)
+	b1(p, twoBlockSize, twoBlockSize, blockSize, angle)
+	b2(p, blockSize, twoBlockSize, blockSize, angle)
 
 	incr()
-	b1(p, 0, 2*blockSize, blockSize, angle)
+	b1(p, 0, twoBlockSize, blockSize, angle)
 	b2(p, 0, blockSize, blockSize, angle)
 }

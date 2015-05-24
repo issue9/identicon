@@ -94,3 +94,18 @@ func BenchmarkMake(b *testing.B) {
 		}
 	}
 }
+
+// BenchmarkIdenticon_Make	    5000	    372890 ns/op
+func BenchmarkIdenticon_Make(b *testing.B) {
+	ii, err := New(back, fore, size)
+	if err != nil {
+		b.Error(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		img := ii.Make([]byte("Make"))
+		if img == nil {
+			b.Error("BenchmarkMake:Make时发生错误")
+		}
+	}
+}
