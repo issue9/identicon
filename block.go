@@ -21,10 +21,12 @@ var (
 
 // 将多边形points旋转angle个角度，然后输出到img上，起点为x,y坐标
 func drawBlock(img *image.Paletted, x, y, size float64, angle int, points [][]float64) {
-	m := size / 2
-	for index, point := range points {
-		x1, y1 := rotate(point[0], point[1], x+m, y+m, angle)
-		points[index] = []float64{x1, y1}
+	if angle > 0 { // 0角度不需要转换
+		m := size / 2
+		for index, point := range points {
+			x1, y1 := rotate(point[0], point[1], x+m, y+m, angle)
+			points[index] = []float64{x1, y1}
+		}
 	}
 
 	for i := x; i < x+size; i++ {
@@ -55,10 +57,10 @@ func b0(img *image.Paletted, x, y, size float64, angle int) {
 //  --------
 func b1(img *image.Paletted, x, y, size float64, angle int) {
 	isize := int(size)
-	ix := int(x) + 1 // 留一白边
-	iy := int(y) + 1
-	for i := ix; i < ix+isize-1; i++ {
-		for j := iy; j < iy+isize-1; j++ {
+	ix := int(x) // 留一白边
+	iy := int(y)
+	for i := ix + 1; i < ix+isize; i++ {
+		for j := iy + 1; j < iy+isize; j++ {
 			img.SetColorIndex(i, j, 1)
 		}
 	}
