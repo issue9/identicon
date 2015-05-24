@@ -23,10 +23,7 @@ var (
 func drawBlock(img *image.Paletted, x, y, size float64, angle int, points [][]float64) {
 	if angle > 0 { // 0角度不需要转换
 		m := size / 2
-		for index, point := range points {
-			x1, y1 := rotate(point[0], point[1], x+m, y+m, angle)
-			points[index] = []float64{x1, y1}
-		}
+		rotate(points, x+m, y+m, angle)
 	}
 
 	for i := x; i < x+size; i++ {

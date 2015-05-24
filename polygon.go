@@ -9,16 +9,19 @@ var (
 	sin = []float64{0, 1, 0, -1}
 )
 
-// 将x,y以x0,y0为原点旋转angle个角度。
+// 将points中的所有点，以x,y为原点旋转angle个角度。
 // angle取值只能是[0,1,2,3]，分别表示[0，90，180，270]
-func rotate(x, y, x0, y0 float64, angle int) (x1, y1 float64) {
+func rotate(points [][]float64, x, y float64, angle int) {
 	if angle > 3 {
 		panic("angle必须0,1,2,3三值之一")
 	}
 
-	x1 = (x-x0)*cos[angle] - (y-y0)*sin[angle] + x0
-	y1 = (x-x0)*sin[angle] + (y-y0)*cos[angle] + y0
-	return
+	for _, point := range points {
+		px := point[0]
+		py := point[1]
+		point[0] = (px-x)*cos[angle] - (py-y)*sin[angle] + x
+		point[1] = (px-x)*sin[angle] + (py-y)*cos[angle] + y
+	}
 }
 
 // 判断某个点是否在多边形之内，不包含构成多边形的线和点
