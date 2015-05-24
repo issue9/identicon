@@ -42,7 +42,7 @@ func TestBlocks(t *testing.T) {
 }
 
 // 产生一组测试图片
-func TestDraw(t *testing.T) {
+func TestDrawBlocks(t *testing.T) {
 	a := assert.New(t)
 
 	for i := 0; i < 20; i++ {
@@ -50,7 +50,7 @@ func TestDraw(t *testing.T) {
 		c := (i + 1) % len(centerBlocks)
 		b1 := (i + 2) % len(blocks)
 		b2 := (i + 3) % len(blocks)
-		draw(p, size, centerBlocks[c], blocks[b1], blocks[b2], 0)
+		drawBlocks(p, size, centerBlocks[c], blocks[b1], blocks[b2], 0)
 
 		fi, err := os.Create("./testdata/draw-" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)

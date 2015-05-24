@@ -18,8 +18,8 @@ const (
 
 // Identicon 用于产生统一颜色和尺寸的头像。
 type Identicon struct {
-	fore, back color.Color
-	size       int
+	colors []color.Color
+	size   int
 }
 
 // 声明一个Identicon实例。
@@ -31,15 +31,15 @@ func New(back, fore color.Color, size int) (*Identicon, error) {
 	}
 
 	return &Identicon{
-		fore: fore,
-		back: back,
-		size: size,
+		colors: []color.Color{back, fore},
+		size:   size,
 	}, nil
 }
 
 // 根据data数据产生一张唯一性的头像图片。
 func (i *Identicon) Make(data []byte) image.Image {
-	return makeImage(i.back, i.fore, i.size, data)
+	p := image.NewPaletted(image.Rect(0, 0, i.size, i.size), i.colors)
+	return drawImage(p, i.size, data)
 }
 
 // 根据data数据产生一张唯一性的头像图片。
@@ -50,10 +50,14 @@ func Make(back, fore color.Color, size int, data []byte) (image.Image, error) {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
 	}
 
-	return makeImage(back, fore, size, data), nil
+	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
+
+	return drawImage(p, size, data), nil
 }
 
-func makeImage(back, fore color.Color, size int, data []byte) image.Image {
+// 将data转换成图像画在p上面。
+// size为画板的长和宽。
+func drawImage(p *image.Paletted, size int, data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
 	sum := h.Sum(nil)
@@ -73,14 +77,16 @@ func makeImage(back, fore color.Color, size int, data []byte) image.Image {
 	// 旋转角度
 	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
-	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
-
-	draw(p, size, c, b1, b2, angle)
+	drawBlocks(p, size, c, b1, b2, angle)
 	return p
 }
 
-// 将完整的头像画到p上。
-func draw(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
+// 将九个方格都填上内容。
+// p为画板。
+// c为中间方格的填充函数。
+// b1,b2为边上8格的填充函数。
+// angle为b1,b2的起始旋转角度。
+func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	blockSize := float64(size / 3) // 每个格子的长宽
 	twoBlockSize := 2 * blockSize
 
