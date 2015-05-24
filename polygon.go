@@ -28,7 +28,7 @@ func rotate(points []float64, x, y float64, angle int) {
 // x,y 需要判断的点坐标
 // points 组成多边形的所顶点，最后一个点必须与第一个点相同。
 func pointInPolygon(x float64, y float64, points []float64) bool {
-	if len(points) < 6 { // 顶点数量少于3个，肯定无法合并
+	if len(points) < 8 { // 顶点数量少于3个(结尾包含第一个点，所以是8)，肯定无法合并
 		return false
 	}
 
@@ -53,10 +53,9 @@ func pointInPolygon(x float64, y float64, points []float64) bool {
 		}
 
 		mul := (x1-x)*(y2-y) - (x2-x)*(y1-y)
-		switch {
-		case mul > 0:
+		if mul > 0 {
 			r++
-		case mul < 0:
+		} else if mul < 0 {
 			r--
 		}
 		x1, y1 = x2, y2
