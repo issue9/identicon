@@ -11,24 +11,24 @@ var (
 
 // 将points中的所有点，以x,y为原点旋转angle个角度。
 // angle取值只能是[0,1,2,3]，分别表示[0，90，180，270]
-func rotate(points [][]float64, x, y float64, angle int) {
+func rotate(points []float64, x, y float64, angle int) {
 	if angle > 3 {
 		panic("angle必须0,1,2,3三值之一")
 	}
 
-	for _, point := range points {
-		px := point[0]
-		py := point[1]
-		point[0] = (px-x)*cos[angle] - (py-y)*sin[angle] + x
-		point[1] = (px-x)*sin[angle] + (py-y)*cos[angle] + y
+	for i := 0; i < len(points); i += 2 {
+		px := points[i]
+		py := points[i+1]
+		points[i] = (px-x)*cos[angle] - (py-y)*sin[angle] + x
+		points[i+1] = (px-x)*sin[angle] + (py-y)*cos[angle] + y
 	}
 }
 
 // 判断某个点是否在多边形之内，不包含构成多边形的线和点
 // x,y 需要判断的点坐标
 // points 组成多边形的所顶点
-func pointInPolygon(x float64, y float64, points [][]float64) bool {
-	if len(points) < 3 { // 顶点数量少于3个，肯定无法合并
+func pointInPolygon(x float64, y float64, points []float64) bool {
+	if len(points) < 5 { // 顶点数量少于3个，肯定无法合并
 		return false
 	}
 
@@ -41,12 +41,12 @@ func pointInPolygon(x float64, y float64, points [][]float64) bool {
 	// 结果为：2==abs(r)。
 
 	r := 0
-	points = append(points, points[0]) // 将起始点放入尾部，形成一个闭合区域
+	points = append(points, points[0], points[1]) // 将起始点放入尾部，形成一个闭合区域
 
-	x1, y1 := points[0][0], points[0][1]
+	x1, y1 := points[0], points[1]
 	prev := (y1 > y) || ((x1 > x) && (y1 == y))
-	for _, p := range points[1:] {
-		x2, y2 := p[0], p[1]
+	for i := 2; i < len(points); i += 2 {
+		x2, y2 := points[i], points[i+1]
 		curr := (y2 > y) || ((x2 > x) && (y2 == y))
 
 		if curr == prev {
