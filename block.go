@@ -59,7 +59,7 @@ func b0(img *image.Paletted, x, y, size float64, angle int) {
 //  --------
 func b1(img *image.Paletted, x, y, size float64, angle int) {
 	isize := int(size)
-	ix := int(x) // 留一白边
+	ix := int(x)
 	iy := int(y)
 	for i := ix + 1; i < ix+isize; i++ {
 		for j := iy + 1; j < iy+isize; j++ {
@@ -101,21 +101,14 @@ func b2(img *image.Paletted, x, y, size float64, angle int) {
 func b3(img *image.Paletted, x, y, size float64, angle int) {
 	m := size / 2
 	points := pool.Get().([]float64)[:0]
-	points = append(points,
+
+	drawBlock(img, x, y, size, 0, append(points,
 		x+m, y,
 		x+size, y+m,
 		x+m, y+size,
 		x, y+m,
 		x+m, y,
-	)
-
-	for i := x; i < x+size; i++ {
-		for j := y; j < y+size; j++ {
-			if pointInPolygon(i, j, points) {
-				img.SetColorIndex(int(i), int(j), 1)
-			}
-		}
-	}
+	))
 
 	pool.Put(points)
 }
@@ -438,4 +431,6 @@ func b16(img *image.Paletted, x, y, size float64, angle int) {
 		x, y+size,
 		x+m, y+m,
 	))
+
+	pool.Put(points)
 }
