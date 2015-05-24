@@ -62,13 +62,15 @@ func TestDrawBlocks(t *testing.T) {
 func TestMake(t *testing.T) {
 	a := assert.New(t)
 
-	img, err := Make(back, fore, size, []byte("Make"))
-	a.NotError(err).NotNil(img)
+	for i := 0; i < 20; i++ {
+		img, err := Make(back, fore, size, []byte("make-"+strconv.Itoa(i)))
+		a.NotError(err).NotNil(img)
 
-	fi, err := os.Create("./testdata/make.png")
-	a.NotError(err).NotNil(fi)
-	a.NotError(png.Encode(fi, img))
-	a.NotError(fi.Close()) // 关闭文件
+		fi, err := os.Create("./testdata/make-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
 }
 
 func TestIdenticon(t *testing.T) {
@@ -76,7 +78,7 @@ func TestIdenticon(t *testing.T) {
 
 	i, err := New(back, fore, size)
 	a.NotError(err).NotNil(i)
-	img := i.Make([]byte("identicon"))
+	img := i.Make([]byte("192.168.1.1"))
 	a.NotNil(img)
 
 	fi, err := os.Create("./testdata/identicon.png")

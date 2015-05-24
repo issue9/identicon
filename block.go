@@ -18,7 +18,7 @@ var (
 	centerBlocks = []blockFunc{b0, b1, b2, b3}
 
 	// 所有方块
-	blocks = []blockFunc{b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15}
+	blocks = []blockFunc{b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16}
 )
 
 // 所有block函数的类型
@@ -410,4 +410,32 @@ func b15(img *image.Paletted, x, y, size float64, angle int) {
 	))
 
 	pool.Put(points)
+}
+
+// b16
+//
+//  ---------
+//  |   #   |
+//  | ##### |
+//  |#######|
+//  |   #   |
+//  | ##### |
+//  |#######|
+//  ---------
+func b16(img *image.Paletted, x, y, size float64, angle int) {
+	points := pool.Get().([]float64)[:0]
+	m := size / 2
+	drawBlock(img, x, y, size, angle, append(points,
+		x+m, y,
+		x+size, y+m,
+		x, y+m,
+		x+m, y,
+	))
+
+	drawBlock(img, x, y, size, angle, append(points[:0],
+		x+m, y+m,
+		x+size, y+size,
+		x, y+size,
+		x+m, y+m,
+	))
 }
