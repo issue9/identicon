@@ -70,7 +70,6 @@ func (i *Identicon) Make(data []byte) image.Image {
 	colorIndex := int(math.Abs(float64(sum[15]))) % len(i.foreColors)
 
 	p := image.NewPaletted(image.Rect(0, 0, i.size, i.size), []color.Color{i.backColor, i.foreColors[colorIndex]})
-
 	drawBlocks(p, i.size, c, b1, b2, angle)
 	return p
 }
@@ -80,7 +79,7 @@ func (i *Identicon) Make(data []byte) image.Image {
 // back, fore头像的背景和前景色。
 func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 	if size < minSize {
-		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
+		return nil, fmt.Errorf("参数size的值(%v)不能小于%v", size, minSize)
 	}
 
 	h := md5.New()
