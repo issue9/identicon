@@ -6,6 +6,7 @@ package identicon
 
 import (
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -13,33 +14,69 @@ import (
 )
 
 const (
-	minSize = 16
+	minSize       = 16
+	maxForeColors = 32
 )
 
-// Identicon 用于产生统一颜色和尺寸的头像。
+// Identicon 用于产生统一尺寸的头像。
+// 可以根据用户提供的数据，经过一定的算法，自动产生相应的图案和颜色。
 type Identicon struct {
-	colors []color.Color
-	size   int
+	foreColors []color.Color
+	backColor  color.Color
+	size       int
 }
 
 // 声明一个Identicon实例。
-// back, fore表示头像的背景和前景色。
 // size表示整个头像的大小。
-func New(back, fore color.Color, size int) (*Identicon, error) {
+// back表示前景色。
+// fore表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。不要与背景色太相近。
+func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
+	if len(fore) == 0 {
+		return nil, errors.New("New:必须指定至少一种前景色")
+	}
+	if len(fore) > maxForeColors {
+		return nil, fmt.Errorf("New:指定了太多的前景色，最多只能指定[%v]种", maxForeColors)
+	}
+
 	if size < minSize {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
 	}
 
 	return &Identicon{
-		colors: []color.Color{back, fore},
-		size:   size,
+		foreColors: fore,
+		backColor:  back,
+		size:       size,
 	}, nil
 }
 
 // 根据data数据产生一张唯一性的头像图片。
 func (i *Identicon) Make(data []byte) image.Image {
-	p := image.NewPaletted(image.Rect(0, 0, i.size, i.size), i.colors)
-	return drawImage(p, i.size, data)
+	h := md5.New()
+	h.Write(data)
+	sum := h.Sum(nil)
+
+	// 第一个方块
+	index := int(math.Abs(float64(sum[0]+sum[1]+sum[2]+sum[3]))) % len(blocks)
+	b1 := blocks[index]
+
+	// 第二个方块
+	index = int(math.Abs(float64(sum[4]+sum[5]+sum[6]+sum[7]))) % len(blocks)
+	b2 := blocks[index]
+
+	// 中间方块
+	index = int(math.Abs(float64(sum[8]+sum[9]+sum[10]+sum[11]))) % len(centerBlocks)
+	c := centerBlocks[index]
+
+	// 旋转角度
+	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]))) % 4
+
+	// 根据最后一个字段，获取前景颜色
+	colorIndex := int(math.Abs(float64(sum[15]))) % len(i.foreColors)
+
+	p := image.NewPaletted(image.Rect(0, 0, i.size, i.size), []color.Color{i.backColor, i.foreColors[colorIndex]})
+
+	drawBlocks(p, i.size, c, b1, b2, angle)
+	return p
 }
 
 // 根据data数据产生一张唯一性的头像图片。
@@ -50,14 +87,6 @@ func Make(back, fore color.Color, size int, data []byte) (image.Image, error) {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
 	}
 
-	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
-
-	return drawImage(p, size, data), nil
-}
-
-// 将data转换成图像画在p上面。
-// size为画板的长和宽。
-func drawImage(p *image.Paletted, size int, data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
 	sum := h.Sum(nil)
@@ -77,8 +106,9 @@ func drawImage(p *image.Paletted, size int, data []byte) image.Image {
 	// 旋转角度
 	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
+	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
 	drawBlocks(p, size, c, b1, b2, angle)
-	return p
+	return p, nil
 }
 
 // 将九个方格都填上内容。

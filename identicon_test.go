@@ -16,9 +16,10 @@ import (
 )
 
 var (
-	back = color.RGBA{255, 0, 0, 100}
-	fore = color.RGBA{0, 255, 255, 100}
-	size = 128
+	back  = color.RGBA{255, 0, 0, 100}
+	fore  = color.RGBA{0, 255, 255, 100}
+	fores = []color.Color{color.Black, color.RGBA{200, 2, 5, 100}, color.RGBA{2, 200, 5, 100}}
+	size  = 128
 )
 
 // 依次画出各个网络的图像。
@@ -76,15 +77,18 @@ func TestMake(t *testing.T) {
 func TestIdenticon(t *testing.T) {
 	a := assert.New(t)
 
-	i, err := New(back, fore, size)
-	a.NotError(err).NotNil(i)
-	img := i.Make([]byte("192.168.1.1"))
-	a.NotNil(img)
+	ii, err := New(size, back, fores...)
+	a.NotError(err).NotNil(ii)
 
-	fi, err := os.Create("./testdata/identicon.png")
-	a.NotError(err).NotNil(fi)
-	a.NotError(png.Encode(fi, img))
-	a.NotError(fi.Close()) // 关闭文件
+	for i := 0; i < 20; i++ {
+		img := ii.Make([]byte("identicon-" + strconv.Itoa(i)))
+		a.NotNil(img)
+
+		fi, err := os.Create("./testdata/identicon-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
 }
 
 // BenchmarkMake    3000    336798 ns/op
@@ -99,7 +103,7 @@ func BenchmarkMake(b *testing.B) {
 
 //BenchmarkIdenticon_Make	    5000	    337151 ns/op
 func BenchmarkIdenticon_Make(b *testing.B) {
-	ii, err := New(back, fore, size)
+	ii, err := New(size, back, fores...)
 	if err != nil {
 		b.Error(err)
 	}

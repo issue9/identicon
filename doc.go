@@ -29,4 +29,4 @@
 //  img = ii.Make([]byte("192.168.1.2"))
 package identicon
 
-const Version = "0.1.4.150524"
+const Version = "0.2.5.150525"
