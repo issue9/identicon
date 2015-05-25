@@ -18,13 +18,13 @@
 // 5则单独使用一张图片。
 //
 //  // 根据用户访问的IP，为其生成一张头像
-//  img, _ := identicon.Make(color.NRGBA{},color.NRGBA{}, 128, []byte("192.168.1.1"))
+//  img, _ := identicon.Make(128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
 //  fi, _ := os.Create("/tmp/u1.png")
 //  png.Encode(fi, img)
 //  fi.Close()
 //
 //  // 或者
-//  ii, _ := identicon.New(color.NRGBA{}, color.NGRGA{}, 128)
+//  ii, _ := identicon.New(128, color.NRGBA{}, color.NGRGA{}, color.NGRBA{})
 //  img := ii.Make([]byte("192.168.1.1"))
 //  img = ii.Make([]byte("192.168.1.2"))
 package identicon

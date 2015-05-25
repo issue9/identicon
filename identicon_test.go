@@ -64,7 +64,7 @@ func TestMake(t *testing.T) {
 	a := assert.New(t)
 
 	for i := 0; i < 20; i++ {
-		img, err := Make(back, fore, size, []byte("make-"+strconv.Itoa(i)))
+		img, err := Make(size, back, fore, []byte("make-"+strconv.Itoa(i)))
 		a.NotError(err).NotNil(img)
 
 		fi, err := os.Create("./testdata/make-" + strconv.Itoa(i) + ".png")
@@ -94,7 +94,7 @@ func TestIdenticon(t *testing.T) {
 // BenchmarkMake    3000    336798 ns/op
 func BenchmarkMake(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		img, err := Make(back, fore, size, []byte("Make"))
+		img, err := Make(size, back, fore, []byte("Make"))
 		if err != nil || img == nil {
 			b.Error("BenchmarkMake:Make时发生错误")
 		}

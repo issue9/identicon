@@ -80,9 +80,9 @@ func (i *Identicon) Make(data []byte) image.Image {
 }
 
 // 根据data数据产生一张唯一性的头像图片。
-// back, fore头像的背景和前景色。
 // size 头像的大小。
-func Make(back, fore color.Color, size int, data []byte) (image.Image, error) {
+// back, fore头像的背景和前景色。
+func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 	if size < minSize {
 		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
 	}
