@@ -6,7 +6,6 @@ package identicon
 
 import (
 	"crypto/md5"
-	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -14,8 +13,8 @@ import (
 )
 
 const (
-	minSize       = 16
-	maxForeColors = 32
+	minSize       = 16 // 图片的最小尺寸
+	maxForeColors = 32 // 在New()函数中可以指定的最大颜色数量
 )
 
 // Identicon 用于产生统一尺寸的头像。
@@ -31,15 +30,12 @@ type Identicon struct {
 // back表示前景色。
 // fore表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。不要与背景色太相近。
 func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
-	if len(fore) == 0 {
-		return nil, errors.New("New:必须指定至少一种前景色")
-	}
-	if len(fore) > maxForeColors {
-		return nil, fmt.Errorf("New:指定了太多的前景色，最多只能指定[%v]种", maxForeColors)
+	if len(fore) == 0 || len(fore) > maxForeColors {
+		return nil, fmt.Errorf("前景色数量必须介于[1]~[%v]之间，当前为[%v]", maxForeColors, len(fore))
 	}
 
 	if size < minSize {
-		return nil, fmt.Errorf("New:产生的图片尺寸(%v)不能小于%v", size, minSize)
+		return nil, fmt.Errorf("参数size的值(%v)不能小于%v", size, minSize)
 	}
 
 	return &Identicon{
