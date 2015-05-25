@@ -93,25 +93,22 @@ func TestIdenticon(t *testing.T) {
 
 // BenchmarkMake    3000    336798 ns/op
 func BenchmarkMake(b *testing.B) {
+	a := assert.New(b)
 	for i := 0; i < b.N; i++ {
 		img, err := Make(size, back, fore, []byte("Make"))
-		if err != nil || img == nil {
-			b.Error("BenchmarkMake:Make时发生错误")
-		}
+		a.NotError(err).NotNil(img)
 	}
 }
 
 //BenchmarkIdenticon_Make	    5000	    337151 ns/op
 func BenchmarkIdenticon_Make(b *testing.B) {
+	a := assert.New(b)
+
 	ii, err := New(size, back, fores...)
-	if err != nil {
-		b.Error(err)
-	}
+	a.NotError(err).NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
 		img := ii.Make([]byte("Make"))
-		if img == nil {
-			b.Error("BenchmarkMake:Make时发生错误")
-		}
+		a.NotNil(img)
 	}
 }
