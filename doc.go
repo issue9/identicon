@@ -24,7 +24,7 @@
 //  fi.Close()
 //
 //  // 或者
-//  ii, _ := identicon.New(128, color.NRGBA{}, color.NGRGA{}, color.NGRBA{})
+//  ii, _ := identicon.New(128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
 //  img := ii.Make([]byte("192.168.1.1"))
 //  img = ii.Make([]byte("192.168.1.2"))
 package identicon
