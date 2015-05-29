@@ -69,7 +69,8 @@ func (i *Identicon) Make(data []byte) image.Image {
 	// 根据最后一个字段，获取前景颜色
 	colorIndex := int(math.Abs(float64(sum[15]))) % len(i.foreColors)
 
-	p := image.NewPaletted(image.Rect(0, 0, i.size, i.size), []color.Color{i.backColor, i.foreColors[colorIndex]})
+	// 画布坐标从0开始，其长度应该是size-1
+	p := image.NewPaletted(image.Rect(0, 0, i.size-1, i.size-1), []color.Color{i.backColor, i.foreColors[colorIndex]})
 	drawBlocks(p, i.size, c, b1, b2, angle)
 	return p
 }
@@ -101,7 +102,8 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 	// 旋转角度
 	angle := int(math.Abs(float64(sum[12]+sum[13]+sum[14]+sum[15]))) % 4
 
-	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
+	// 画布坐标从0开始，其长度应该是size-1
+	p := image.NewPaletted(image.Rect(0, 0, size-1, size-1), []color.Color{back, fore})
 	drawBlocks(p, size, c, b1, b2, angle)
 	return p, nil
 }

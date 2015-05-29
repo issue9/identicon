@@ -47,7 +47,7 @@ func TestDrawBlocks(t *testing.T) {
 	a := assert.New(t)
 
 	for i := 0; i < 20; i++ {
-		p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
+		p := image.NewPaletted(image.Rect(0, 0, size-1, size-1), []color.Color{back, fore})
 		c := (i + 1) % len(centerBlocks)
 		b1 := (i + 2) % len(blocks)
 		b2 := (i + 3) % len(blocks)
