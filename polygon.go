@@ -5,7 +5,10 @@
 package identicon
 
 var (
+	// 4个元素分别表示cos(0),cos(90),cos(180),cos(270)
 	cos = []float64{1, 0, -1, 0}
+
+	// 4个元素分别表示sin(0),sin(90),sin(180),sin(270)
 	sin = []float64{0, 1, 0, -1}
 )
 
@@ -13,7 +16,7 @@ var (
 // angle取值只能是[0,1,2,3]，分别表示[0，90，180，270]
 func rotate(points []float64, x, y float64, angle int) {
 	if angle > 3 {
-		panic("angle必须0,1,2,3三值之一")
+		panic("rotate:参数angle必须0,1,2,3三值之一")
 	}
 
 	for i := 0; i < len(points); i += 2 {
@@ -26,9 +29,9 @@ func rotate(points []float64, x, y float64, angle int) {
 
 // 判断某个点是否在多边形之内，不包含构成多边形的线和点
 // x,y 需要判断的点坐标
-// points 组成多边形的所顶点，最后一个点必须与第一个点相同。
+// points 组成多边形的所顶点，每两个元素表示一点顶点，其中最后一个顶点必须与第一个顶点相同。
 func pointInPolygon(x float64, y float64, points []float64) bool {
-	if len(points) < 8 { // 顶点数量少于3个(结尾包含第一个点，所以是8)，肯定无法合并
+	if len(points) < 8 { // 只有2个以上的点，才能组成闭合多边形
 		return false
 	}
 

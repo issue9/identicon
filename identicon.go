@@ -28,7 +28,8 @@ type Identicon struct {
 // 声明一个Identicon实例。
 // size表示整个头像的大小。
 // back表示前景色。
-// fore表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。不要与背景色太相近。
+// fore表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
+// NOTE:前景色不要与背景色太相近。
 func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
 	if len(fore) == 0 || len(fore) > maxForeColors {
 		return nil, fmt.Errorf("前景色数量必须介于[1]~[%v]之间，当前为[%v]", maxForeColors, len(fore))
@@ -120,10 +121,9 @@ func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	twoBlockSize := 2 * blockSize
 
 	incr := func() { // 增加angle的值，但不会大于3
-		if angle > 2 {
+		angle++
+		if angle > 3 {
 			angle = 0
-		} else {
-			angle++
 		}
 	}
 

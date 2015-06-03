@@ -87,7 +87,7 @@ func b2(img *image.Paletted, x, y, size float64, angle int) {
 	}
 }
 
-// b3
+// 菱形
 //
 //  ---------
 //  |   #   |
