@@ -53,22 +53,22 @@ func (i *Identicon) Make(data []byte) image.Image {
 	sum := h.Sum(nil)
 
 	// 第一个方块
-	index := abs(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
+	index := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
 	b1 := blocks[index]
 
 	// 第二个方块
-	index = abs(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
+	index = int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
 	b2 := blocks[index]
 
 	// 中间方块
-	index = abs(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
+	index = int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
 	c := centerBlocks[index]
 
 	// 旋转角度
-	angle := abs(sum[12]+sum[13]+sum[14]) % 4
+	angle := int(sum[12]+sum[13]+sum[14]) % 4
 
 	// 根据最后一个字段，获取前景颜色
-	index = abs(sum[15]) % len(i.foreColors)
+	index = int(sum[15]) % len(i.foreColors)
 
 	// 画布坐标从0开始，其长度应该是size-1
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[index]})
@@ -89,19 +89,19 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 	sum := h.Sum(nil)
 
 	// 第一个方块
-	index := abs(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
+	index := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
 	b1 := blocks[index]
 
 	// 第二个方块
-	index = abs(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
+	index = int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
 	b2 := blocks[index]
 
 	// 中间方块
-	index = abs(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
+	index = int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
 	c := centerBlocks[index]
 
 	// 旋转角度
-	angle := abs(sum[12]+sum[13]+sum[14]+sum[15]) % 4
+	angle := int(sum[12]+sum[13]+sum[14]+sum[15]) % 4
 
 	// 画布坐标从0开始，其长度应该是size-1
 	p := image.NewPaletted(image.Rect(0, 0, size-1, size-1), []color.Color{back, fore})
@@ -142,11 +142,4 @@ func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	incr()
 	b1(p, 0, twoBlockSize, blockSize, angle)
 	b2(p, 0, blockSize, blockSize, angle)
-}
-
-func abs(x byte) int {
-	if x < 0 {
-		return int(-x)
-	}
-	return int(x)
 }
