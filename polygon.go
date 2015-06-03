@@ -17,10 +17,10 @@ func rotate(points []float64, x, y float64, angle int) {
 	}
 
 	for i := 0; i < len(points); i += 2 {
-		px := points[i]
-		py := points[i+1]
-		points[i] = (px-x)*cos[angle] - (py-y)*sin[angle] + x
-		points[i+1] = (px-x)*sin[angle] + (py-y)*cos[angle] + y
+		px := points[i] - x
+		py := points[i+1] - y
+		points[i] = px*cos[angle] - py*sin[angle] + x
+		points[i+1] = px*sin[angle] + py*cos[angle] + y
 	}
 }
 

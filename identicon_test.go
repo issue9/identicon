@@ -91,7 +91,7 @@ func TestIdenticon(t *testing.T) {
 	}
 }
 
-// BenchmarkMake    3000    336798 ns/op
+// BenchmarkMake	    5000	    229378 ns/op
 func BenchmarkMake(b *testing.B) {
 	a := assert.New(b)
 	for i := 0; i < b.N; i++ {
@@ -100,7 +100,7 @@ func BenchmarkMake(b *testing.B) {
 	}
 }
 
-//BenchmarkIdenticon_Make	    5000	    337151 ns/op
+// BenchmarkIdenticon_Make	   10000	    222127 ns/op
 func BenchmarkIdenticon_Make(b *testing.B) {
 	a := assert.New(b)
 
