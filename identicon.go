@@ -22,6 +22,7 @@ type Identicon struct {
 	foreColors []color.Color
 	backColor  color.Color
 	size       int
+	rect       image.Rectangle
 }
 
 // 声明一个Identicon实例。
@@ -41,6 +42,7 @@ func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
 		foreColors: fore,
 		backColor:  back,
 		size:       size,
+		rect:       image.Rect(0, 0, size-1, size-1),
 	}, nil
 }
 
@@ -69,7 +71,7 @@ func (i *Identicon) Make(data []byte) image.Image {
 	index = abs(sum[15]) % len(i.foreColors)
 
 	// 画布坐标从0开始，其长度应该是size-1
-	p := image.NewPaletted(image.Rect(0, 0, i.size-1, i.size-1), []color.Color{i.backColor, i.foreColors[index]})
+	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[index]})
 	drawBlocks(p, i.size, c, b1, b2, angle)
 	return p
 }
