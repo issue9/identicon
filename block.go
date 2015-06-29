@@ -27,7 +27,9 @@ type blockFunc func(img *image.Paletted, x, y, size float64, angle int)
 // 将多边形points旋转angle个角度，然后输出到img上，起点为x,y坐标
 func drawBlock(img *image.Paletted, x, y, size float64, angle int, points []float64) {
 	if angle > 0 { // 0角度不需要转换
-		m := size / 2
+		// 中心坐标与x,y的距离，方便下面指定中心坐标(x+m,y+m)，
+		// 0.5的偏移值不能少，否则坐靠右，非正中央
+		m := size/2 - 0.5
 		rotate(points, x+m, y+m, angle)
 	}
 

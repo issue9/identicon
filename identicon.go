@@ -45,7 +45,7 @@ func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
 		size:       size,
 
 		// 画布坐标从0开始，其长度应该是size-1
-		rect: image.Rect(0, 0, size-1, size-1),
+		rect: image.Rect(0, 0, size, size),
 	}, nil
 }
 
@@ -106,7 +106,7 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 	angle := int(sum[12]+sum[13]+sum[14]+sum[15]) % 4
 
 	// 画布坐标从0开始，其长度应该是size-1
-	p := image.NewPaletted(image.Rect(0, 0, size-1, size-1), []color.Color{back, fore})
+	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
 	drawBlocks(p, size, c, b1, b2, angle)
 	return p, nil
 }
@@ -117,7 +117,8 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 // b1,b2为边上8格的填充函数。
 // angle为b1,b2的起始旋转角度。
 func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
-	blockSize := float64(size / 3) // 每个格子的长宽
+	// 每个格子的长宽。先转换成float，再计算！
+	blockSize := float64(size) / 3
 	twoBlockSize := 2 * blockSize
 
 	incr := func() { // 增加angle的值，但不会大于3
