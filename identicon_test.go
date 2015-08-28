@@ -22,6 +22,13 @@ var (
 	size  = 128
 )
 
+// 在不存在testdata目录下的情况下，自动创建一个目录。
+func TestInit(t *testing.T) {
+	a := assert.New(t)
+
+	a.NotError(os.MkdirAll("./testdata/", os.ModePerm))
+}
+
 // 依次画出各个网络的图像。
 func TestBlocks(t *testing.T) {
 	p := []color.Color{back, fore}
