@@ -35,5 +35,3 @@
 // NOTE: go test 会在当前目录的testdata文件夹下产生大量的随机图片。
 // 要运行测试，必须保证该文件夹是存在的，且有相应的写入权限。
 package identicon
-
-const Version = "0.2.6.150603"
