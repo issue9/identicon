@@ -15,7 +15,7 @@ var (
 // 将points中的所有点，以x,y为原点旋转angle个角度。
 // angle取值只能是[0,1,2,3]，分别表示[0，90，180，270]
 func rotate(points []float64, x, y float64, angle int) {
-	if angle > 3 {
+	if angle < 0 || angle > 3 {
 		panic("rotate:参数angle必须0,1,2,3三值之一")
 	}
 
