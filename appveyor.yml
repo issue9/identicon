@@ -1,0 +1,15 @@
+
+build: off
+
+clone_folder: c:\gopath\src\github.com\issue9\identicon
+
+environment:
+  GO111MODULE: on
+
+stack: go 1.11
+
+before_test:
+  - go vet ./...
+
+test_script:
+  - go test -v -coverprofile=coverage.txt -covermode=atomic ./...
