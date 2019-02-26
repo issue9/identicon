@@ -1,6 +1,5 @@
 identicon
 [![Build Status](https://travis-ci.org/issue9/identicon.svg?branch=master)](https://travis-ci.org/issue9/identicon)
-[![Build status](https://ci.appveyor.com/api/projects/status/rfrif7u2ac0b53o2?svg=true)](https://ci.appveyor.com/project/caixw/identicon)
 ======
 
 根据用户的 IP 、邮箱名等任意数据为用户产生漂亮的随机头像。
