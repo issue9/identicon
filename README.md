@@ -1,5 +1,7 @@
 identicon
-[![Build Status](https://travis-ci.org/issue9/identicon.svg?branch=master)](https://travis-ci.org/issue9/identicon)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fissue9%2Fidenticon%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/issue9/identicon/goto?ref=master)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/gh/issue9/identicon/branch/master/graph/badge.svg)](https://codecov.io/gh/issue9/identicon)
 ======
 
 根据用户的 IP 、邮箱名等任意数据为用户产生漂亮的随机头像。
