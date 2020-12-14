@@ -2,6 +2,7 @@ identicon
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fissue9%2Fidenticon%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/issue9/identicon/goto?ref=master)
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
 [![codecov](https://codecov.io/gh/issue9/identicon/branch/master/graph/badge.svg)](https://codecov.io/gh/issue9/identicon)
+[![Go Reference](https://pkg.go.dev/badge/github.com/issue9/identicon.svg)](https://pkg.go.dev/github.com/issue9/identicon)
 ======
 
 根据用户的 IP 、邮箱名等任意数据为用户产生漂亮的随机头像。
@@ -31,12 +32,6 @@ img = ii.Make([]byte("192.168.1.2"))
 ```shell
 go get github.com/issue9/identicon
 ```
-
-文档
-----
-
-[![Go Walker](https://gowalker.org/api/v1/badge)](https://gowalker.org/github.com/issue9/identicon)
-[![GoDoc](https://godoc.org/github.com/issue9/identicon?status.svg)](https://godoc.org/github.com/issue9/identicon)
 
 版权
 ----
