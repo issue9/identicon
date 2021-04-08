@@ -14,7 +14,8 @@ const (
 	maxForeColors = 32 // 在New()函数中可以指定的最大颜色数量
 )
 
-// Identicon 用于产生统一尺寸的头像。
+// Identicon 用于产生统一尺寸的头像
+//
 // 可以根据用户提供的数据，经过一定的算法，自动产生相应的图案和颜色。
 type Identicon struct {
 	foreColors []color.Color
@@ -23,7 +24,8 @@ type Identicon struct {
 	rect       image.Rectangle
 }
 
-// New 声明一个 Identicon 实例。
+// New 声明一个 Identicon 实例
+//
 // size 表示整个头像的大小；
 // back 表示前景色；
 // fore 表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
@@ -41,12 +43,12 @@ func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
 		backColor:  back,
 		size:       size,
 
-		// 画布坐标从0开始，其长度应该是size-1
+		// 画布坐标从0开始，其长度应该是 size-1
 		rect: image.Rect(0, 0, size, size),
 	}, nil
 }
 
-// Make 根据 data 数据产生一张唯一性的头像图片。
+// Make 根据 data 数据产生一张唯一性的头像图片
 func (i *Identicon) Make(data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
@@ -75,7 +77,8 @@ func (i *Identicon) Make(data []byte) image.Image {
 	return p
 }
 
-// Make 根据 data 数据产生一张唯一性的头像图片。
+// Make 根据 data 数据产生一张唯一性的头像图片
+//
 // size 头像的大小。
 // back, fore头像的背景和前景色。
 func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
@@ -96,27 +99,17 @@ func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
 	blockSize := float64(size) / 3
 	twoBlockSize := 2 * blockSize
 
-	incr := func() { // 增加 angle 的值，但不会大于 3
-		angle++
-		if angle > 3 {
-			angle = 0
-		}
-	}
-
 	c(p, blockSize, blockSize, blockSize, 0)
 
-	b1(p, 0, 0, blockSize, angle)
-	b2(p, blockSize, 0, blockSize, angle)
+	b1(p, 0, 0, blockSize, 0)
+	b2(p, blockSize, 0, blockSize, 0)
 
-	incr()
-	b1(p, twoBlockSize, 0, blockSize, angle)
-	b2(p, twoBlockSize, blockSize, blockSize, angle)
+	b1(p, twoBlockSize, 0, blockSize, 1)
+	b2(p, twoBlockSize, blockSize, blockSize, 1)
 
-	incr()
-	b1(p, twoBlockSize, twoBlockSize, blockSize, angle)
-	b2(p, blockSize, twoBlockSize, blockSize, angle)
+	b1(p, twoBlockSize, twoBlockSize, blockSize, 2)
+	b2(p, blockSize, twoBlockSize, blockSize, 2)
 
-	incr()
-	b1(p, 0, twoBlockSize, blockSize, angle)
-	b2(p, 0, blockSize, blockSize, angle)
+	b1(p, 0, twoBlockSize, blockSize, 3)
+	b2(p, 0, blockSize, blockSize, 3)
 }
