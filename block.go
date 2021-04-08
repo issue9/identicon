@@ -2,9 +2,7 @@
 
 package identicon
 
-import (
-	"image"
-)
+import "image"
 
 var (
 	// 可以出现在中间的方块，一般为了美观，都是对称图像。
@@ -18,16 +16,18 @@ var (
 type blockFunc func(img *image.Paletted, x, y, size int, angle int)
 
 // 将多边形 points 旋转 angle 个角度，然后输出到 img 上，起点为 x,y 坐标
+//
+// points 中的坐标是基于左上角是原点的坐标系。
 func drawBlock(img *image.Paletted, x, y, size int, angle int, points []int) {
 	if angle > 0 { // 0 角度不需要转换
 		m := size / 2
-		rotate(points, x+m, y+m, angle)
+		rotate(points, m, m, angle)
 	}
 
-	for i := x; i < x+size; i++ {
-		for j := y; j < y+size; j++ {
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
 			if pointInPolygon(i, j, points) {
-				img.SetColorIndex(i, j, 1)
+				img.SetColorIndex(x+i, y+j, 1)
 			}
 		}
 	}
@@ -40,8 +40,7 @@ func drawBlock(img *image.Paletted, x, y, size int, angle int, points []int) {
 //  |      |
 //  |      |
 //  --------
-func b0(img *image.Paletted, x, y, size int, angle int) {
-}
+func b0(img *image.Paletted, x, y, size int, angle int) {}
 
 // 全填充正方形
 //
@@ -91,11 +90,11 @@ func b2(img *image.Paletted, x, y, size int, angle int) {
 func b3(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, 0, []int{
-		x + m, y,
-		x + size, y + m,
-		x + m, y + size,
-		x, y + m,
-		x + m, y,
+		m, 0,
+		size, m,
+		m, size,
+		0, m,
+		m, 0,
 	})
 }
 
@@ -110,10 +109,10 @@ func b3(img *image.Paletted, x, y, size int, angle int) {
 //  |------
 func b4(img *image.Paletted, x, y, size int, angle int) {
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + size, y,
-		x, y + size,
-		x, y,
+		0, 0,
+		size, 0,
+		0, size,
+		0, 0,
 	})
 }
 
@@ -127,10 +126,10 @@ func b4(img *image.Paletted, x, y, size int, angle int) {
 func b5(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y,
-		x + size, y + size,
-		x, y + size,
-		x + m, y,
+		m, 0,
+		size, size,
+		0, size,
+		m, 0,
 	})
 }
 
@@ -144,11 +143,11 @@ func b5(img *image.Paletted, x, y, size int, angle int) {
 func b6(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + m, y,
-		x + m, y + size,
-		x, y + size,
-		x, y,
+		0, 0,
+		m, 0,
+		m, size,
+		0, size,
+		0, 0,
 	})
 }
 
@@ -163,11 +162,11 @@ func b6(img *image.Paletted, x, y, size int, angle int) {
 func b7(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + size, y + m,
-		x + size, y + size,
-		x + m, y + size,
-		x, y,
+		0, 0,
+		size, m,
+		size, size,
+		m, size,
+		0, 0,
 	})
 }
 
@@ -187,26 +186,26 @@ func b8(img *image.Paletted, x, y, size int, angle int) {
 
 	// 顶部三角形
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y,
-		x + 3*mm, y + m,
-		x + mm, y + m,
-		x + m, y,
+		m, 0,
+		3 * mm, m,
+		mm, m,
+		m, 0,
 	})
 
 	// 底下左边
 	drawBlock(img, x, y, size, angle, []int{
-		x + mm, y + m,
-		x + m, y + size,
-		x, y + size,
-		x + mm, y + m,
+		mm, m,
+		m, size,
+		0, size,
+		mm, m,
 	})
 
 	// 底下右边
 	drawBlock(img, x, y, size, angle, []int{
-		x + 3*mm, y + m,
-		x + size, y + size,
-		x + m, y + size,
-		x + 3*mm, y + m,
+		3 * mm, m,
+		size, size,
+		m, size,
+		3 * mm, m,
 	})
 }
 
@@ -222,10 +221,10 @@ func b8(img *image.Paletted, x, y, size int, angle int) {
 func b9(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + size, y + m,
-		x + m, y + size,
-		x, y,
+		0, 0,
+		size, m,
+		m, size,
+		0, 0,
 	})
 }
 
@@ -244,17 +243,17 @@ func b9(img *image.Paletted, x, y, size int, angle int) {
 func b10(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y,
-		x + size, y,
-		x + m, y + m,
-		x + m, y,
+		m, 0,
+		size, 0,
+		m, m,
+		m, 0,
 	})
 
 	drawBlock(img, x, y, size, angle, []int{
-		x, y + m,
-		x + m, y + m,
-		x, y + size,
-		x, y + m,
+		0, m,
+		m, m,
+		0, size,
+		0, m,
 	})
 }
 
@@ -270,11 +269,11 @@ func b10(img *image.Paletted, x, y, size int, angle int) {
 func b11(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + m, y,
-		x + m, y + m,
-		x, y + m,
-		x, y,
+		0, 0,
+		m, 0,
+		m, m,
+		0, m,
+		0, 0,
 	})
 }
 
@@ -290,10 +289,10 @@ func b11(img *image.Paletted, x, y, size int, angle int) {
 func b12(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y + m,
-		x + size, y + m,
-		x + m, y + size,
-		x, y + m,
+		0, m,
+		size, m,
+		m, size,
+		0, m,
 	})
 }
 
@@ -309,10 +308,10 @@ func b12(img *image.Paletted, x, y, size int, angle int) {
 func b13(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y + m,
-		x + size, y + size,
-		x, y + size,
-		x + m, y + m,
+		m, m,
+		size, size,
+		0, size,
+		m, m,
 	})
 }
 
@@ -328,10 +327,10 @@ func b13(img *image.Paletted, x, y, size int, angle int) {
 func b14(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y,
-		x + m, y + m,
-		x, y + m,
-		x + m, y,
+		m, 0,
+		m, m,
+		0, m,
+		m, 0,
 	})
 }
 
@@ -347,10 +346,10 @@ func b14(img *image.Paletted, x, y, size int, angle int) {
 func b15(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + m, y,
-		x, y + m,
-		x, y,
+		0, 0,
+		m, 0,
+		0, m,
+		0, 0,
 	})
 }
 
@@ -367,17 +366,17 @@ func b15(img *image.Paletted, x, y, size int, angle int) {
 func b16(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y,
-		x + size, y + m,
-		x, y + m,
-		x + m, y,
+		m, 0,
+		size, m,
+		0, m,
+		m, 0,
 	})
 
 	drawBlock(img, x, y, size, angle, []int{
-		x + m, y + m,
-		x + size, y + size,
-		x, y + size,
-		x + m, y + m,
+		m, m,
+		size, size,
+		0, size,
+		m, m,
 	})
 }
 
@@ -394,18 +393,18 @@ func b17(img *image.Paletted, x, y, size int, angle int) {
 	m := size / 2
 
 	drawBlock(img, x, y, size, angle, []int{
-		x, y,
-		x + m, y,
-		x, y + m,
-		x, y,
+		0, 0,
+		m, 0,
+		0, m,
+		0, 0,
 	})
 
 	quarter := size / 4
 	drawBlock(img, x, y, size, angle, []int{
-		x + size - quarter, y + size - quarter,
-		x + size, y + size - quarter,
-		x + size, y + size,
-		x + size - quarter, y + size,
-		x + size - quarter, y + size - quarter,
+		size - quarter, size - quarter,
+		size, size - quarter,
+		size, size,
+		size - quarter, size,
+		size - quarter, size - quarter,
 	})
 }

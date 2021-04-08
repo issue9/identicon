@@ -32,11 +32,11 @@ type Identicon struct {
 // fore 表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
 func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
 	if len(fore) == 0 || len(fore) > maxForeColors {
-		return nil, fmt.Errorf("前景色数量必须介于[1]~[%v]之间，当前为[%v]", maxForeColors, len(fore))
+		return nil, fmt.Errorf("前景色数量必须介于[1]~[%d]之间，当前为[%d]", maxForeColors, len(fore))
 	}
 
 	if size < minSize {
-		return nil, fmt.Errorf("参数size的值(%v)不能小于%v", size, minSize)
+		return nil, fmt.Errorf("参数 size 的值(%d)不能小于 %d", size, minSize)
 	}
 
 	return &Identicon{
@@ -101,10 +101,6 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 // b1、b2 为边上 8 格的填充函数；
 // b1Angle 和 b2Angle 为 b1、b2 的起始旋转角度。
 func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Angle int) {
-	// 每个格子的长宽。先转换成 float，再计算！
-	blockSize := size / 3
-	twoBlockSize := 2 * blockSize
-
 	incr := func(a int) int {
 		if a >= 3 {
 			a = 0
@@ -114,23 +110,28 @@ func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Ang
 		return a
 	}
 
-	c(p, blockSize, blockSize, blockSize, 0)
+	padding := (size % 6) / 2 // 不能除尽的，边上留白。
 
-	b1(p, 0, 0, blockSize, b1Angle)
-	b2(p, blockSize, 0, blockSize, b2Angle)
+	blockSize := size / 3
+	twoBlockSize := 2 * blockSize
 
-	b1Angle = incr(b1Angle)
-	b2Angle = incr(b2Angle)
-	b1(p, twoBlockSize, 0, blockSize, b1Angle)
-	b2(p, twoBlockSize, blockSize, blockSize, b2Angle)
+	c(p, blockSize+padding, blockSize+padding, blockSize, 0)
 
-	b1Angle = incr(b1Angle)
-	b2Angle = incr(b2Angle)
-	b1(p, twoBlockSize, twoBlockSize, blockSize, b1Angle)
-	b2(p, blockSize, twoBlockSize, blockSize, b2Angle)
+	b1(p, 0+padding, 0+padding, blockSize, b1Angle)
+	b2(p, blockSize+padding, 0+padding, blockSize, b2Angle)
 
 	b1Angle = incr(b1Angle)
 	b2Angle = incr(b2Angle)
-	b1(p, 0, twoBlockSize, blockSize, b1Angle)
-	b2(p, 0, blockSize, blockSize, b2Angle)
+	b1(p, twoBlockSize+padding, 0+padding, blockSize, b1Angle)
+	b2(p, twoBlockSize+padding, blockSize+padding, blockSize, b2Angle)
+
+	b1Angle = incr(b1Angle)
+	b2Angle = incr(b2Angle)
+	b1(p, twoBlockSize+padding, twoBlockSize+padding, blockSize, b1Angle)
+	b2(p, blockSize+padding, twoBlockSize+padding, blockSize, b2Angle)
+
+	b1Angle = incr(b1Angle)
+	b2Angle = incr(b2Angle)
+	b1(p, 0+padding, twoBlockSize+padding, blockSize, b1Angle)
+	b2(p, 0+padding, blockSize+padding, blockSize, b2Angle)
 }
