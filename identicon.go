@@ -55,13 +55,14 @@ func (i *Identicon) Make(data []byte) image.Image {
 	h.Write(data)
 	sum := h.Sum(nil)
 
-	b1 := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
-	b2 := int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
-	c := int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
-	angle := int(sum[12]+sum[13]+sum[14]) % 4
-	color := int(sum[15]) % len(i.foreColors)
+	b1 := int(sum[0]+sum[1]+sum[2]) % len(blocks)
+	b2 := int(sum[3]+sum[4]+sum[5]) % len(blocks)
+	c := int(sum[6]+sum[7]+sum[8]) % len(centerBlocks)
+	b1Angle := int(sum[9]+sum[10]) % 4
+	b2Angle := int(sum[11]+sum[12]) % 4
+	color := int(sum[11]+sum[12]+sum[15]) % len(i.foreColors)
 
-	return i.render(c, b1, b2, angle, color)
+	return i.render(c, b1, b2, b1Angle, b2Angle, color)
 }
 
 // Rand 随机生成图案
@@ -69,15 +70,16 @@ func (i *Identicon) Rand(r *rand.Rand) image.Image {
 	b1 := r.Intn(len(blocks))
 	b2 := r.Intn(len(blocks))
 	c := r.Intn(len(centerBlocks))
-	angle := r.Intn(4)
+	b1Angle := r.Intn(4)
+	b2Angle := r.Intn(4)
 	color := r.Intn(len(i.foreColors))
 
-	return i.render(c, b1, b2, angle, color)
+	return i.render(c, b1, b2, b1Angle, b2Angle, color)
 }
 
-func (i *Identicon) render(c, b1, b2, angle, foreColor int) image.Image {
+func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Image {
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[foreColor]})
-	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], angle)
+	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], b1Angle, b2Angle)
 	return p
 }
 
@@ -97,23 +99,38 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 // p 为画板；
 // c 为中间方格的填充函数；
 // b1、b2 为边上 8 格的填充函数；
-// angle 为 b1、b2 的起始旋转角度。
-func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, angle int) {
+// b1Angle 和 b2Angle 为 b1、b2 的起始旋转角度。
+func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Angle int) {
 	// 每个格子的长宽。先转换成 float，再计算！
 	blockSize := float64(size) / 3
 	twoBlockSize := 2 * blockSize
 
+	incr := func(a int) int {
+		if a >= 3 {
+			a = 0
+		} else {
+			a++
+		}
+		return a
+	}
+
 	c(p, blockSize, blockSize, blockSize, 0)
 
-	b1(p, 0, 0, blockSize, 0)
-	b2(p, blockSize, 0, blockSize, 0)
+	b1(p, 0, 0, blockSize, b1Angle)
+	b2(p, blockSize, 0, blockSize, b2Angle)
 
-	b1(p, twoBlockSize, 0, blockSize, 1)
-	b2(p, twoBlockSize, blockSize, blockSize, 1)
+	b1Angle = incr(b1Angle)
+	b2Angle = incr(b2Angle)
+	b1(p, twoBlockSize, 0, blockSize, b1Angle)
+	b2(p, twoBlockSize, blockSize, blockSize, b2Angle)
 
-	b1(p, twoBlockSize, twoBlockSize, blockSize, 2)
-	b2(p, blockSize, twoBlockSize, blockSize, 2)
+	b1Angle = incr(b1Angle)
+	b2Angle = incr(b2Angle)
+	b1(p, twoBlockSize, twoBlockSize, blockSize, b1Angle)
+	b2(p, blockSize, twoBlockSize, blockSize, b2Angle)
 
-	b1(p, 0, twoBlockSize, blockSize, 3)
-	b2(p, 0, blockSize, blockSize, 3)
+	b1Angle = incr(b1Angle)
+	b2Angle = incr(b2Angle)
+	b1(p, 0, twoBlockSize, blockSize, b1Angle)
+	b2(p, 0, blockSize, blockSize, b2Angle)
 }
