@@ -6,9 +6,11 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math/rand"
 	"os"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/issue9/assert"
 )
@@ -19,13 +21,6 @@ var (
 	fores = []color.Color{color.Black, color.RGBA{200, 2, 5, 100}, color.RGBA{2, 200, 5, 100}}
 	size  = 128
 )
-
-// 在不存在testdata目录下的情况下，自动创建一个目录。
-func TestInit(t *testing.T) {
-	a := assert.New(t)
-
-	a.NotError(os.MkdirAll("./testdata/", os.ModePerm))
-}
 
 // 依次画出各个网络的图像。
 func TestBlocks(t *testing.T) {
@@ -79,7 +74,7 @@ func TestMake(t *testing.T) {
 	}
 }
 
-func TestIdenticon(t *testing.T) {
+func TestIdenticon_Make(t *testing.T) {
 	a := assert.New(t)
 
 	ii, err := New(size, back, fores...)
@@ -96,7 +91,24 @@ func TestIdenticon(t *testing.T) {
 	}
 }
 
-// BenchmarkMake	    5000	    229378 ns/op
+func TestIdenticon_Rand(t *testing.T) {
+	a := assert.New(t)
+
+	ii, err := New(size, back, fores...)
+	a.NotError(err).NotNil(ii)
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
+	for i := 0; i < 20; i++ {
+		img := ii.Rand(r)
+		a.NotNil(img)
+
+		fi, err := os.Create("./testdata/rand-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
+}
+
 func BenchmarkMake(b *testing.B) {
 	a := assert.New(b)
 	for i := 0; i < b.N; i++ {
@@ -105,7 +117,6 @@ func BenchmarkMake(b *testing.B) {
 	}
 }
 
-// BenchmarkIdenticon_Make	   10000	    222127 ns/op
 func BenchmarkIdenticon_Make(b *testing.B) {
 	a := assert.New(b)
 
@@ -114,6 +125,19 @@ func BenchmarkIdenticon_Make(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		img := ii.Make([]byte("Make"))
+		a.NotNil(img)
+	}
+}
+
+func BenchmarkIdenticon_Rand(b *testing.B) {
+	a := assert.New(b)
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
+	ii, err := New(size, back, fores...)
+	a.NotError(err).NotNil(ii)
+
+	for i := 0; i < b.N; i++ {
+		img := ii.Rand(r)
 		a.NotNil(img)
 	}
 }
