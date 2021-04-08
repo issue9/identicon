@@ -1,9 +1,10 @@
-identicon
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fissue9%2Fidenticon%2Fbadge%3Fref%3Dmaster&style=flat)](https://actions-badge.atrox.dev/issue9/identicon/goto?ref=master)
-[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
+# identicon
+
+[![Go](https://github.com/issue9/identicon/actions/workflows/go.yml/badge.svg)](https://github.com/issue9/identicon/actions/workflows/go.yml)
 [![codecov](https://codecov.io/gh/issue9/identicon/branch/master/graph/badge.svg)](https://codecov.io/gh/issue9/identicon)
-[![Go Reference](https://pkg.go.dev/badge/github.com/issue9/identicon.svg)](https://pkg.go.dev/github.com/issue9/identicon)
-======
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/issue9/identicon)](https://pkg.go.dev/github.com/issue9/identicon)
+![Go version](https://img.shields.io/github/go-mod/go-version/issue9/identicon)
+![License](https://img.shields.io/github/license/issue9/identicon)
 
 根据用户的 IP 、邮箱名等任意数据为用户产生漂亮的随机头像。
 
@@ -26,14 +27,12 @@ img := ii.Make([]byte("192.168.1.1"))
 img = ii.Make([]byte("192.168.1.2"))
 ```
 
-安装
-----
+## 安装
 
 ```shell
 go get github.com/issue9/identicon
 ```
 
-版权
-----
+## 版权
 
 本项目采用 [MIT](https://opensource.org/licenses/MIT) 开源授权许可证，完整的授权说明可在 [LICENSE](LICENSE) 文件中找到。

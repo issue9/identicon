@@ -79,33 +79,11 @@ func (i *Identicon) Make(data []byte) image.Image {
 // size 头像的大小。
 // back, fore头像的背景和前景色。
 func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
-	if size < minSize {
-		return nil, fmt.Errorf("参数size的值(%v)不能小于%v", size, minSize)
+	i, err := New(size, back, fore)
+	if err != nil {
+		return nil, err
 	}
-
-	h := md5.New()
-	h.Write(data)
-	sum := h.Sum(nil)
-
-	// 第一个方块
-	index := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
-	b1 := blocks[index]
-
-	// 第二个方块
-	index = int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
-	b2 := blocks[index]
-
-	// 中间方块
-	index = int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
-	c := centerBlocks[index]
-
-	// 旋转角度
-	angle := int(sum[12]+sum[13]+sum[14]+sum[15]) % 4
-
-	// 画布坐标从0开始，其长度应该是size-1
-	p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
-	drawBlocks(p, size, c, b1, b2, angle)
-	return p, nil
+	return i.Make(data), nil
 }
 
 // 将九个方格都填上内容。
