@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"math/rand"
 )
 
 const (
@@ -54,26 +55,29 @@ func (i *Identicon) Make(data []byte) image.Image {
 	h.Write(data)
 	sum := h.Sum(nil)
 
-	// 第一个方块
-	index := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
-	b1 := blocks[index]
-
-	// 第二个方块
-	index = int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
-	b2 := blocks[index]
-
-	// 中间方块
-	index = int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
-	c := centerBlocks[index]
-
-	// 旋转角度
+	b1 := int(sum[0]+sum[1]+sum[2]+sum[3]) % len(blocks)
+	b2 := int(sum[4]+sum[5]+sum[6]+sum[7]) % len(blocks)
+	c := int(sum[8]+sum[9]+sum[10]+sum[11]) % len(centerBlocks)
 	angle := int(sum[12]+sum[13]+sum[14]) % 4
+	color := int(sum[15]) % len(i.foreColors)
 
-	// 根据最后一个字段，获取前景颜色
-	index = int(sum[15]) % len(i.foreColors)
+	return i.render(c, b1, b2, angle, color)
+}
 
-	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[index]})
-	drawBlocks(p, i.size, c, b1, b2, angle)
+// Rand 随机生成图案
+func (i *Identicon) Rand(r *rand.Rand) image.Image {
+	b1 := r.Intn(len(blocks))
+	b2 := r.Intn(len(blocks))
+	c := r.Intn(len(centerBlocks))
+	angle := r.Intn(4)
+	color := r.Intn(len(i.foreColors))
+
+	return i.render(c, b1, b2, angle, color)
+}
+
+func (i *Identicon) render(c, b1, b2, angle, foreColor int) image.Image {
+	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[foreColor]})
+	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], angle)
 	return p
 }
 
