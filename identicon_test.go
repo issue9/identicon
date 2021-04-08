@@ -32,7 +32,7 @@ func TestBlocks(t *testing.T) {
 		img := image.NewPaletted(image.Rect(0, 0, size*4, size), p) // 横向4张图片大小
 
 		for i := 0; i < 4; i++ {
-			v(img, float64(i*size), 0, float64(size), i)
+			v(img, i*size, 0, size, i)
 		}
 
 		fi, err := os.Create("./testdata/block-" + strconv.Itoa(k) + ".png")

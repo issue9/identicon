@@ -102,7 +102,7 @@ func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
 // b1Angle 和 b2Angle 为 b1、b2 的起始旋转角度。
 func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Angle int) {
 	// 每个格子的长宽。先转换成 float，再计算！
-	blockSize := float64(size) / 3
+	blockSize := size / 3
 	twoBlockSize := 2 * blockSize
 
 	incr := func(a int) int {
