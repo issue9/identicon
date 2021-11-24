@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/issue9/assert"
+	"github.com/issue9/assert/v2"
 )
 
 var (
@@ -26,7 +26,7 @@ var (
 func TestBlocks(t *testing.T) {
 	p := []color.Color{back, fore}
 
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	for k, v := range blocks {
 		img := image.NewPaletted(image.Rect(0, 0, size*4, size), p) // 横向4张图片大小
@@ -44,7 +44,7 @@ func TestBlocks(t *testing.T) {
 
 // 产生一组测试图片
 func TestDrawBlocks(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	for i := 0; i < 20; i++ {
 		p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
@@ -61,7 +61,7 @@ func TestDrawBlocks(t *testing.T) {
 }
 
 func TestMake(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	for i := 0; i < 20; i++ {
 		img, err := Make(size, back, fore, []byte("make-"+strconv.Itoa(i)))
@@ -75,7 +75,7 @@ func TestMake(t *testing.T) {
 }
 
 func TestIdenticon_Make(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	ii, err := New(size, back, fores...)
 	a.NotError(err).NotNil(ii)
@@ -92,7 +92,7 @@ func TestIdenticon_Make(t *testing.T) {
 }
 
 func TestIdenticon_Rand(t *testing.T) {
-	a := assert.New(t)
+	a := assert.New(t, false)
 
 	ii, err := New(size, back, fores...)
 	a.NotError(err).NotNil(ii)
@@ -110,7 +110,7 @@ func TestIdenticon_Rand(t *testing.T) {
 }
 
 func BenchmarkMake(b *testing.B) {
-	a := assert.New(b)
+	a := assert.New(b, false)
 	for i := 0; i < b.N; i++ {
 		img, err := Make(size, back, fore, []byte("Make"))
 		a.NotError(err).NotNil(img)
@@ -118,7 +118,7 @@ func BenchmarkMake(b *testing.B) {
 }
 
 func BenchmarkIdenticon_Make(b *testing.B) {
-	a := assert.New(b)
+	a := assert.New(b, false)
 
 	ii, err := New(size, back, fores...)
 	a.NotError(err).NotNil(ii)
@@ -130,7 +130,7 @@ func BenchmarkIdenticon_Make(b *testing.B) {
 }
 
 func BenchmarkIdenticon_Rand(b *testing.B) {
-	a := assert.New(b)
+	a := assert.New(b, false)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
 	ii, err := New(size, back, fores...)

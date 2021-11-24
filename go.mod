@@ -1,5 +1,5 @@
 module github.com/issue9/identicon
 
-require github.com/issue9/assert v1.4.1
+require github.com/issue9/assert/v2 v2.0.0
 
-go 1.13
+go 1.14

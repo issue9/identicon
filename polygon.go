@@ -14,7 +14,7 @@ var (
 // angle 取值只能是 [0,1,2,3]，分别表示 [0，90，180，270]
 func rotate(points []int, x, y int, angle int) {
 	if angle < 0 || angle > 3 {
-		panic("rotate:参数angle必须0,1,2,3三值之一")
+		panic("rotate:参数 angle 必须 0、1、2 和 3 三值之一")
 	}
 
 	for i := 0; i < len(points); i += 2 {
