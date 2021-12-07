@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	back  = color.RGBA{255, 0, 0, 100}
-	fore  = color.RGBA{0, 255, 255, 100}
-	fores = []color.Color{color.Black, color.RGBA{200, 2, 5, 100}, color.RGBA{2, 200, 5, 100}}
+	back  = color.RGBA{R: 255, G: 0, B: 0, A: 100}
+	fore  = color.RGBA{R: 0, G: 255, B: 255, A: 100}
+	fores = []color.Color{color.Black, color.RGBA{R: 200, G: 2, B: 5, A: 100}, color.RGBA{R: 2, G: 200, B: 5, A: 100}}
 	size  = 128
 )
 
@@ -64,8 +64,8 @@ func TestMake(t *testing.T) {
 	a := assert.New(t, false)
 
 	for i := 0; i < 20; i++ {
-		img, err := Make(size, back, fore, []byte("make-"+strconv.Itoa(i)))
-		a.NotError(err).NotNil(img)
+		img := Make(size, back, fore, []byte("make-"+strconv.Itoa(i)))
+		a.NotNil(img)
 
 		fi, err := os.Create("./testdata/make-" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)
@@ -77,8 +77,8 @@ func TestMake(t *testing.T) {
 func TestIdenticon_Make(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii, err := New(size, back, fores...)
-	a.NotError(err).NotNil(ii)
+	ii := New(size, back, fores...)
+	a.NotNil(ii)
 
 	for i := 0; i < 20; i++ {
 		img := ii.Make([]byte("identicon-" + strconv.Itoa(i)))
@@ -94,8 +94,8 @@ func TestIdenticon_Make(t *testing.T) {
 func TestIdenticon_Rand(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii, err := New(size, back, fores...)
-	a.NotError(err).NotNil(ii)
+	ii := New(size, back, fores...)
+	a.NotNil(ii)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
 	for i := 0; i < 20; i++ {
@@ -112,16 +112,16 @@ func TestIdenticon_Rand(t *testing.T) {
 func BenchmarkMake(b *testing.B) {
 	a := assert.New(b, false)
 	for i := 0; i < b.N; i++ {
-		img, err := Make(size, back, fore, []byte("Make"))
-		a.NotError(err).NotNil(img)
+		img := Make(size, back, fore, []byte("Make"))
+		a.NotNil(img)
 	}
 }
 
 func BenchmarkIdenticon_Make(b *testing.B) {
 	a := assert.New(b, false)
 
-	ii, err := New(size, back, fores...)
-	a.NotError(err).NotNil(ii)
+	ii := New(size, back, fores...)
+	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
 		img := ii.Make([]byte("Make"))
@@ -133,8 +133,8 @@ func BenchmarkIdenticon_Rand(b *testing.B) {
 	a := assert.New(b, false)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	ii, err := New(size, back, fores...)
-	a.NotError(err).NotNil(ii)
+	ii := New(size, back, fores...)
+	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
 		img := ii.Rand(r)

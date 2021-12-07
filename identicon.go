@@ -10,10 +10,7 @@ import (
 	"math/rand"
 )
 
-const (
-	minSize       = 16 // 图片的最小尺寸
-	maxForeColors = 32 // 在New()函数中可以指定的最大颜色数量
-)
+const minSize = 16 // 图片的最小尺寸
 
 // Identicon 用于产生统一尺寸的头像
 //
@@ -30,23 +27,21 @@ type Identicon struct {
 // size 表示整个头像的大小；
 // back 表示前景色；
 // fore 表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
-func New(size int, back color.Color, fore ...color.Color) (*Identicon, error) {
-	if len(fore) == 0 || len(fore) > maxForeColors {
-		return nil, fmt.Errorf("前景色数量必须介于[1]~[%d]之间，当前为[%d]", maxForeColors, len(fore))
+func New(size int, back color.Color, fore ...color.Color) *Identicon {
+	if len(fore) == 0 {
+		panic("必须指定 fore 参数")
 	}
 
 	if size < minSize {
-		return nil, fmt.Errorf("参数 size 的值(%d)不能小于 %d", size, minSize)
+		panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, minSize))
 	}
 
 	return &Identicon{
 		foreColors: fore,
 		backColor:  back,
 		size:       size,
-
-		// 画布坐标从0开始，其长度应该是 size-1
-		rect: image.Rect(0, 0, size, size),
-	}, nil
+		rect:       image.Rect(0, 0, size, size),
+	}
 }
 
 // Make 根据 data 数据产生一张唯一性的头像图片
@@ -60,9 +55,9 @@ func (i *Identicon) Make(data []byte) image.Image {
 	c := int(sum[6]+sum[7]+sum[8]) % len(centerBlocks)
 	b1Angle := int(sum[9]+sum[10]) % 4
 	b2Angle := int(sum[11]+sum[12]) % 4
-	color := int(sum[11]+sum[12]+sum[15]) % len(i.foreColors)
+	fc := int(sum[11]+sum[12]+sum[15]) % len(i.foreColors)
 
-	return i.render(c, b1, b2, b1Angle, b2Angle, color)
+	return i.render(c, b1, b2, b1Angle, b2Angle, fc)
 }
 
 // Rand 随机生成图案
@@ -72,9 +67,9 @@ func (i *Identicon) Rand(r *rand.Rand) image.Image {
 	c := r.Intn(len(centerBlocks))
 	b1Angle := r.Intn(4)
 	b2Angle := r.Intn(4)
-	color := r.Intn(len(i.foreColors))
+	fc := r.Intn(len(i.foreColors))
 
-	return i.render(c, b1, b2, b1Angle, b2Angle, color)
+	return i.render(c, b1, b2, b1Angle, b2Angle, fc)
 }
 
 func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Image {
@@ -86,13 +81,9 @@ func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Ima
 // Make 根据 data 数据产生一张唯一性的头像图片
 //
 // size 头像的大小。
-// back, fore头像的背景和前景色。
-func Make(size int, back, fore color.Color, data []byte) (image.Image, error) {
-	i, err := New(size, back, fore)
-	if err != nil {
-		return nil, err
-	}
-	return i.Make(data), nil
+// back, fore 头像的背景和前景色。
+func Make(size int, back, fore color.Color, data []byte) image.Image {
+	return New(size, back, fore).Make(data)
 }
 
 // 将九个方格都填上内容。
