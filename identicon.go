@@ -10,7 +10,7 @@ import (
 	"math/rand"
 )
 
-const minSize = 16 // 图片的最小尺寸
+const minSize = 24 // 图片的最小尺寸
 
 // Identicon 用于产生统一尺寸的头像
 //
@@ -24,9 +24,9 @@ type Identicon struct {
 
 // New 声明一个 Identicon 实例
 //
-// size 表示整个头像的大小；
-// back 表示前景色；
-// fore 表示所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
+// size 头像的大小，应该将 size 的值保持在能被 3 整除的偶数，图片才会平整；
+// back 前景色；
+// fore 所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
 func New(size int, back color.Color, fore ...color.Color) *Identicon {
 	if len(fore) == 0 {
 		panic("必须指定 fore 参数")
@@ -44,7 +44,7 @@ func New(size int, back color.Color, fore ...color.Color) *Identicon {
 	}
 }
 
-// Make 根据 data 数据产生一张唯一性的头像图片
+// Make 根据 data 数据随机图片
 func (i *Identicon) Make(data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
