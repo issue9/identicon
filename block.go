@@ -9,7 +9,11 @@ var (
 	centerBlocks = []blockFunc{b0, b1, b2, b3, b19, b26, b27}
 
 	// 所有方块
-	blocks = []blockFunc{b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18, b19, b20, b21, b22, b23, b24, b25, b26, b27}
+	blocks = []blockFunc{
+		b0, b1, b2, b3, b4, b5, b6, b7, b8, b9,
+		b10, b11, b12, b13, b14, b15, b16, b17, b18, b19,
+		b20, b21, b22, b23, b24, b25, b26, b27,
+	}
 )
 
 // 所有 block 函数的类型
@@ -18,7 +22,7 @@ type blockFunc func(img *image.Paletted, x, y, size int, angle int)
 // 将多边形 points 旋转 angle 个角度，然后输出到 img 上，起点为 x,y 坐标
 //
 // points 中的坐标是基于左上角是原点的坐标系。
-func drawBlock(img *image.Paletted, x, y, size int, angle int, points []int) {
+func drawBlock(img *image.Paletted, x, y, size, angle int, points []int) {
 	if angle > 0 { // 0 角度不需要转换
 		m := size / 2
 		rotate(points, m, m, angle)
@@ -98,8 +102,6 @@ func b3(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b4
-//
 //  -------
 //  |#####|
 //  |#### |
@@ -116,8 +118,6 @@ func b4(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b5
-//
 //  ---------
 //  |   #   |
 //  |  ###  |
@@ -228,8 +228,6 @@ func b9(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b10
-//
 //  ----------
 //  |    ####|
 //  |    ### |
@@ -277,8 +275,6 @@ func b11(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b12
-//
 //  -----------
 //  |         |
 //  |         |
@@ -296,8 +292,6 @@ func b12(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b13
-//
 //  -----------
 //  |         |
 //  |         |
@@ -315,8 +309,6 @@ func b13(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b14
-//
 //  ---------
 //  |   #   |
 //  | ###   |
@@ -334,8 +326,6 @@ func b14(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b15
-//
 //  ----------
 //  |#####   |
 //  |###     |
@@ -353,8 +343,6 @@ func b15(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b16
-//
 //  ---------
 //  |   #   |
 //  | ##### |
@@ -380,8 +368,6 @@ func b16(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b17
-//
 //  ----------
 //  |#####   |
 //  |###     |
@@ -409,8 +395,6 @@ func b17(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b18
-//
 //  ----------
 //  |#####   |
 //  |####    |
@@ -429,8 +413,6 @@ func b18(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b19
-//
 //  ----------
 //  |########|
 //  |###  ###|
@@ -470,8 +452,6 @@ func b19(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b20
-//
 //  ----------
 //  |  ##     |
 //  |###      |
@@ -491,8 +471,6 @@ func b20(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b21
-//
 //  ----------
 //  | ####   |
 //  |## #####|
@@ -519,8 +497,6 @@ func b21(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b22
-//
 //  ----------
 //  | ####   |
 //  |##  ### |
@@ -547,8 +523,6 @@ func b22(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b23
-//
 //  ----------
 //  | #######|
 //  |###    #|
@@ -575,8 +549,6 @@ func b23(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b24
-//
 //  ----------
 //  | ##  ###|
 //  |###  ###|
@@ -603,8 +575,6 @@ func b24(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b25
-//
 //  ----------
 //  |#      #|
 //  |##   ###|
@@ -631,8 +601,6 @@ func b25(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b26
-//
 //  ----------
 //  |#      #|
 //  |###  ###|
@@ -673,8 +641,6 @@ func b26(img *image.Paletted, x, y, size int, angle int) {
 	})
 }
 
-// b27
-//
 //  ----------
 //  |########|
 //  |##   ###|

@@ -64,7 +64,7 @@ func TestMake(t *testing.T) {
 	a := assert.New(t, false)
 
 	for i := 0; i < 20; i++ {
-		img := Make(size, back, fore, []byte("make-"+strconv.Itoa(i)))
+		img := Make(V1, size, back, fore, []byte("make-"+strconv.Itoa(i)))
 		a.NotNil(img)
 
 		fi, err := os.Create("./testdata/make-" + strconv.Itoa(i) + ".png")
@@ -77,7 +77,7 @@ func TestMake(t *testing.T) {
 func TestIdenticon_Make(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii := New(size, back, fores...)
+	ii := New(V1, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < 20; i++ {
@@ -91,10 +91,27 @@ func TestIdenticon_Make(t *testing.T) {
 	}
 }
 
+func TestIdenticon_V2(t *testing.T) {
+	a := assert.New(t, false)
+
+	ii := New(V2, size, back, fores...)
+	a.NotNil(ii)
+
+	for i := 20; i < 50; i++ {
+		img := ii.Make([]byte("identicon-" + strconv.Itoa(i)))
+		a.NotNil(img)
+
+		fi, err := os.Create("./testdata/v2-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
+}
+
 func TestIdenticon_Rand(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii := New(size, back, fores...)
+	ii := New(V1, size, back, fores...)
 	a.NotNil(ii)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
@@ -112,7 +129,7 @@ func TestIdenticon_Rand(t *testing.T) {
 func BenchmarkMake(b *testing.B) {
 	a := assert.New(b, false)
 	for i := 0; i < b.N; i++ {
-		img := Make(size, back, fore, []byte("Make"))
+		img := Make(V1, size, back, fore, []byte("Make"))
 		a.NotNil(img)
 	}
 }
@@ -120,7 +137,7 @@ func BenchmarkMake(b *testing.B) {
 func BenchmarkIdenticon_Make(b *testing.B) {
 	a := assert.New(b, false)
 
-	ii := New(size, back, fores...)
+	ii := New(V1, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
@@ -133,11 +150,23 @@ func BenchmarkIdenticon_Rand(b *testing.B) {
 	a := assert.New(b, false)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	ii := New(size, back, fores...)
+	ii := New(V1, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
 		img := ii.Rand(r)
+		a.NotNil(img)
+	}
+}
+
+func BenchmarkIdenticon_V2(b *testing.B) {
+	a := assert.New(b, false)
+
+	ii := New(V2, size, back, fores...)
+	a.NotNil(ii)
+
+	for i := 0; i < b.N; i++ {
+		img := ii.Make([]byte("Make"))
 		a.NotNil(img)
 	}
 }

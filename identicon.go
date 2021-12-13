@@ -5,9 +5,21 @@ package identicon
 import (
 	"crypto/md5"
 	"fmt"
+	"hash"
+	"hash/fnv"
 	"image"
 	"image/color"
+	"math"
+	"math/bits"
 	"math/rand"
+	"strconv"
+)
+
+type Style int8
+
+const (
+	V1 Style = iota + 1 // 旧版本风格
+	V2                  // v2 风格，性能略高于 V1
 )
 
 const minSize = 24 // 图片的最小尺寸
@@ -16,36 +28,114 @@ const minSize = 24 // 图片的最小尺寸
 //
 // 可以根据用户提供的数据，经过一定的算法，自动产生相应的图案和颜色。
 type Identicon struct {
+	style      Style
 	foreColors []color.Color
 	backColor  color.Color
 	size       int
 	rect       image.Rectangle
+
+	// style v2
+	hash         hash.Hash64
+	bitsPerPoint int
 }
 
 // New 声明一个 Identicon 实例
 //
+// style 图片风格；
 // size 头像的大小，应该将 size 的值保持在能被 3 整除的偶数，图片才会平整；
 // back 前景色；
 // fore 所有可能的前景色，会为每个图像随机挑选一个作为其前景色。
-func New(size int, back color.Color, fore ...color.Color) *Identicon {
+func New(style Style, size int, back color.Color, fore ...color.Color) *Identicon {
 	if len(fore) == 0 {
 		panic("必须指定 fore 参数")
 	}
 
-	if size < minSize {
-		panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, minSize))
+	switch style {
+	case V1:
+		if size < minSize {
+			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, minSize))
+		}
+	case V2:
+		if size%8 != 0 {
+			panic(fmt.Sprintf("参数 size 的值 %d 必须为 8 的倍数", size))
+		}
 	}
 
 	return &Identicon{
+		style:      style,
 		foreColors: fore,
 		backColor:  back,
 		size:       size,
 		rect:       image.Rect(0, 0, size, size),
+
+		// hash
+		hash:         fnv.New64a(),
+		bitsPerPoint: size / 8,
 	}
+}
+
+// Rand 随机生成图案
+func (i *Identicon) Rand(r *rand.Rand) image.Image {
+	v := r.Int63n(math.MaxInt64)
+	return i.Make([]byte(strconv.FormatInt(v, 10)))
 }
 
 // Make 根据 data 数据随机图片
 func (i *Identicon) Make(data []byte) image.Image {
+	switch i.style {
+	case V1:
+		return i.v1(data)
+	case V2:
+		return i.v2(data)
+	default:
+		panic("无效的 style")
+	}
+}
+
+func (i *Identicon) v2(data []byte) image.Image {
+	i.hash.Write(data)
+	sum := i.hash.Sum64()
+	i.hash.Reset()
+
+	lines := matrix(sum)
+	fc := sum % uint64(len(i.foreColors))
+	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
+
+	var yBase, xBase int
+	for y := 0; y < 8; y++ {
+		line := lines[y]
+		for yy := 0; yy < i.bitsPerPoint; yy++ {
+			for x := 0; x < 8; x++ {
+				var index uint8
+				if value := uint8(0b1000_0000 >> x); value&line == value {
+					index = 1
+				}
+
+				for xx := 0; xx < i.bitsPerPoint; xx++ {
+					p.SetColorIndex(xBase+xx, yBase+yy, index)
+				}
+
+				xBase += i.bitsPerPoint
+			}
+			xBase = 0
+		} // end yy
+		yBase += i.bitsPerPoint
+	}
+
+	return p
+}
+
+func matrix(v uint64) []uint8 {
+	ret := make([]uint8, 16)
+	for i := 0; i < 16; i++ {
+		vv := uint8((v >> (i * 4) & 0x0f))
+		vv <<= 4
+		ret[i] = vv + bits.Reverse8(vv)
+	}
+	return ret
+}
+
+func (i *Identicon) v1(data []byte) image.Image {
 	h := md5.New()
 	h.Write(data)
 	sum := h.Sum(nil)
@@ -60,18 +150,6 @@ func (i *Identicon) Make(data []byte) image.Image {
 	return i.render(c, b1, b2, b1Angle, b2Angle, fc)
 }
 
-// Rand 随机生成图案
-func (i *Identicon) Rand(r *rand.Rand) image.Image {
-	b1 := r.Intn(len(blocks))
-	b2 := r.Intn(len(blocks))
-	c := r.Intn(len(centerBlocks))
-	b1Angle := r.Intn(4)
-	b2Angle := r.Intn(4)
-	fc := r.Intn(len(i.foreColors))
-
-	return i.render(c, b1, b2, b1Angle, b2Angle, fc)
-}
-
 func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Image {
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[foreColor]})
 	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], b1Angle, b2Angle)
@@ -82,8 +160,8 @@ func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Ima
 //
 // size 头像的大小。
 // back, fore 头像的背景和前景色。
-func Make(size int, back, fore color.Color, data []byte) image.Image {
-	return New(size, back, fore).Make(data)
+func Make(style Style, size int, back, fore color.Color, data []byte) image.Image {
+	return New(style, size, back, fore).Make(data)
 }
 
 // 将九个方格都填上内容。
@@ -94,10 +172,9 @@ func Make(size int, back, fore color.Color, data []byte) image.Image {
 func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Angle int) {
 	incr := func(a int) int {
 		if a >= 3 {
-			a = 0
-		} else {
-			a++
+			return 0
 		}
+		a++
 		return a
 	}
 

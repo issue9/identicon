@@ -8,21 +8,33 @@
 
 根据用户的 IP 、邮箱名等任意数据为用户产生漂亮的随机头像。
 
-![screenshot.1](https://raw.github.com/issue9/identicon/master/screenshot/1.png)
-![screenshot.4](https://raw.github.com/issue9/identicon/master/screenshot/4.png)
-![screenshot.5](https://raw.github.com/issue9/identicon/master/screenshot/5.png)
-![screenshot.6](https://raw.github.com/issue9/identicon/master/screenshot/6.png)
-![screenshot.7](https://raw.github.com/issue9/identicon/master/screenshot/7.png)
+提供了两种风格的头像数据，其中 V2 风格更加的像素风，且性能也更佳。
+
+v1
+
+![v1.1](screenshot/v1-1.png)
+![v1.2](screenshot/v1-2.png)
+![v1.3](screenshot/v1-3.png)
+![v1.4](screenshot/v1-4.png)
+![v1.5](screenshot/v1-5.png)
+
+v2
+
+![v2.1](screenshot/v2-1.png)
+![v2.2](screenshot/v2-2.png)
+![v2.3](screenshot/v2-3.png)
+![v2.4](screenshot/v2-4.png)
+![v2.5](screenshot/v2-5.png)
 
 ```go
 // 根据用户访问的IP，为其生成一张头像
-img, _ := identicon.Make(128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
+img, _ := identicon.Make(V1, 128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
 fi, _ := os.Create("/tmp/u1.png")
 png.Encode(fi, img)
 fi.Close()
 
 // 或者
-ii, _ := identicon.New(128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
+ii, _ := identicon.New(V2, 128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
 img := ii.Make([]byte("192.168.1.1"))
 img = ii.Make([]byte("192.168.1.2"))
 ```
