@@ -7,7 +7,11 @@
 // 进行 hash 运算，之后根据 hash 数据，产生一张图像，
 // 这样即可以为用户产生一张独特的头像，又不会泄漏用户的隐藏。
 //
-// 在 identicon 中，把图像分成以下九个部分:
+// 提供了两种风格的头像：V1 和 V2。
+//
+// v1
+//
+// 在 v1 中，把图像分成以下九个部分:
 //  -------------
 //  | 1 | 2 | 3 |
 //  -------------
@@ -19,14 +23,19 @@
 // 2、6、8、4 也是如此，这样可以保持图像是对称的，比较美观。
 // 5 则单独使用一张图片。
 //
+// v2
+//
+// 将用户内容计算出 32 位的 hash 值，以 4 bit 为一行，
+// 值为 1 表示有前景色，为 0 表示没有背景色，同时镜像到右边。
+//
 //  // 根据用户访问的 IP ，为其生成一张头像
-//  img := identicon.Make(128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
+//  img := identicon.Make(V2, 128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
 //  fi, _ := os.Create("/tmp/u1.png")
 //  png.Encode(fi, img)
 //  fi.Close()
 //
 //  // 或者
-//  ii := identicon.New(128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
+//  ii := identicon.New(V1, 128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
 //  img := ii.Make([]byte("192.168.1.1"))
 //  img = ii.Make([]byte("192.168.1.2"))
 //

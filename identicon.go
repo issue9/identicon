@@ -35,7 +35,7 @@ type Identicon struct {
 	rect       image.Rectangle
 
 	// style v2
-	hash         hash.Hash64
+	hash         hash.Hash32
 	bitsPerPoint int
 }
 
@@ -69,7 +69,7 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 		rect:       image.Rect(0, 0, size, size),
 
 		// hash
-		hash:         fnv.New64a(),
+		hash:         fnv.New32a(),
 		bitsPerPoint: size / 8,
 	}
 }
@@ -94,11 +94,11 @@ func (i *Identicon) Make(data []byte) image.Image {
 
 func (i *Identicon) v2(data []byte) image.Image {
 	i.hash.Write(data)
-	sum := i.hash.Sum64()
+	sum := i.hash.Sum32()
 	i.hash.Reset()
 
 	lines := matrix(sum)
-	fc := sum % uint64(len(i.foreColors))
+	fc := sum % uint32(len(i.foreColors))
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
 
 	var yBase, xBase int
@@ -125,9 +125,9 @@ func (i *Identicon) v2(data []byte) image.Image {
 	return p
 }
 
-func matrix(v uint64) []uint8 {
-	ret := make([]uint8, 16)
-	for i := 0; i < 16; i++ {
+func matrix(v uint32) []uint8 {
+	ret := make([]uint8, 8)
+	for i := 0; i < 8; i++ {
 		vv := uint8((v >> (i * 4) & 0x0f))
 		vv <<= 4
 		ret[i] = vv + bits.Reverse8(vv)
