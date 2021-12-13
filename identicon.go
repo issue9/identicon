@@ -3,7 +3,6 @@
 package identicon
 
 import (
-	"crypto/md5"
 	"fmt"
 	"hash"
 	"hash/fnv"
@@ -22,7 +21,7 @@ const (
 	V2                  // v2 风格，性能略高于 V1
 )
 
-const minSize = 24 // 图片的最小尺寸
+const v1MinSize = 24
 
 // Identicon 用于产生统一尺寸的头像
 //
@@ -52,8 +51,8 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 
 	switch style {
 	case V1:
-		if size < minSize {
-			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, minSize))
+		if size < v1MinSize {
+			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, v1MinSize))
 		}
 	case V2:
 		if size%8 != 0 {
@@ -82,21 +81,21 @@ func (i *Identicon) Rand(r *rand.Rand) image.Image {
 
 // Make 根据 data 数据随机图片
 func (i *Identicon) Make(data []byte) image.Image {
+	i.hash.Write(data)
+	sum := i.hash.Sum32()
+	i.hash.Reset()
+
 	switch i.style {
 	case V1:
-		return i.v1(data)
+		return i.v1(sum)
 	case V2:
-		return i.v2(data)
+		return i.v2(sum)
 	default:
 		panic("无效的 style")
 	}
 }
 
-func (i *Identicon) v2(data []byte) image.Image {
-	i.hash.Write(data)
-	sum := i.hash.Sum32()
-	i.hash.Reset()
-
+func (i *Identicon) v2(sum uint32) image.Image {
 	lines := matrix(sum)
 	fc := sum % uint32(len(i.foreColors))
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
@@ -135,23 +134,15 @@ func matrix(v uint32) []uint8 {
 	return ret
 }
 
-func (i *Identicon) v1(data []byte) image.Image {
-	h := md5.New()
-	h.Write(data)
-	sum := h.Sum(nil)
+func (i *Identicon) v1(sum uint32) image.Image {
+	b1 := int(sum&0x00_00_00_ff) % len(blocks)
+	b2 := int(sum&0x00_00_ff_00) % len(blocks)
+	c := int(sum&0x00_ff_00_00) % len(centerBlocks)
+	b1Angle := int(sum&0x0f_00_00_00) % 4
+	b2Angle := int(sum&0xf0_00_00_00) % 4
+	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
 
-	b1 := int(sum[0]+sum[1]+sum[2]) % len(blocks)
-	b2 := int(sum[3]+sum[4]+sum[5]) % len(blocks)
-	c := int(sum[6]+sum[7]+sum[8]) % len(centerBlocks)
-	b1Angle := int(sum[9]+sum[10]) % 4
-	b2Angle := int(sum[11]+sum[12]) % 4
-	fc := int(sum[11]+sum[12]+sum[15]) % len(i.foreColors)
-
-	return i.render(c, b1, b2, b1Angle, b2Angle, fc)
-}
-
-func (i *Identicon) render(c, b1, b2, b1Angle, b2Angle, foreColor int) image.Image {
-	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[foreColor]})
+	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
 	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], b1Angle, b2Angle)
 	return p
 }
