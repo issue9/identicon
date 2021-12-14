@@ -12,7 +12,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/issue9/identicon/internal/style1"
+	"github.com/issue9/identicon/v2/internal/style1"
 )
 
 type Style int8

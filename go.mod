@@ -1,4 +1,4 @@
-module github.com/issue9/identicon
+module github.com/issue9/identicon/v2
 
 require github.com/issue9/assert/v2 v2.0.0
 

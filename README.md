@@ -2,7 +2,7 @@
 
 [![Go](https://github.com/issue9/identicon/actions/workflows/go.yml/badge.svg)](https://github.com/issue9/identicon/actions/workflows/go.yml)
 [![codecov](https://codecov.io/gh/issue9/identicon/branch/master/graph/badge.svg)](https://codecov.io/gh/issue9/identicon)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/issue9/identicon)](https://pkg.go.dev/github.com/issue9/identicon)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/issue9/identicon)](https://pkg.go.dev/github.com/issue9/identicon/v2)
 ![Go version](https://img.shields.io/github/go-mod/go-version/issue9/identicon)
 ![License](https://img.shields.io/github/license/issue9/identicon)
 
