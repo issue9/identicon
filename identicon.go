@@ -8,6 +8,7 @@ import (
 	"hash/fnv"
 	"image"
 	"image/color"
+	"image/color/palette"
 	"math"
 	"math/rand"
 	"strconv"
@@ -23,54 +24,6 @@ const (
 	Style2                  // Style2 风格，性能略高于 Style1
 )
 
-var foreColors = []color.Color{
-	color.RGBA{R: 0x00, G: 0x33, B: 0x00, A: 100},
-	color.RGBA{R: 0x00, G: 0x33, B: 0x33, A: 100},
-	color.RGBA{R: 0x00, G: 0x33, B: 0x66, A: 100},
-	color.RGBA{R: 0x00, G: 0x33, B: 0xcc, A: 100},
-	color.RGBA{R: 0x00, G: 0x66, B: 0x00, A: 100},
-	color.RGBA{R: 0x00, G: 0x66, B: 0x66, A: 100},
-	color.RGBA{R: 0x00, G: 0x66, B: 0x99, A: 100},
-	color.RGBA{R: 0x00, G: 0x66, B: 0xcc, A: 100},
-	color.RGBA{R: 0x00, G: 0x99, B: 0x00, A: 100},
-	color.RGBA{R: 0x00, G: 0x99, B: 0x33, A: 100},
-	color.RGBA{R: 0x00, G: 0x99, B: 0xcc, A: 100},
-	color.RGBA{R: 0x00, G: 0x99, B: 0xff, A: 100},
-	color.RGBA{R: 0x00, G: 0xcc, B: 0x00, A: 100},
-	color.RGBA{R: 0x00, G: 0xcc, B: 0x99, A: 100},
-
-	color.RGBA{R: 0x33, G: 0x33, B: 0x66, A: 100},
-	color.RGBA{R: 0x33, G: 0x99, B: 0x00, A: 100},
-	color.RGBA{R: 0x33, G: 0xcc, B: 0xff, A: 100},
-
-	color.RGBA{R: 0x66, G: 0x00, B: 0x00, A: 100},
-	color.RGBA{R: 0x66, G: 0x00, B: 0xcc, A: 100},
-	color.RGBA{R: 0x66, G: 0x33, B: 0x00, A: 100},
-	color.RGBA{R: 0x66, G: 0x66, B: 0x00, A: 100},
-	color.RGBA{R: 0x66, G: 0x66, B: 0x99, A: 100},
-	color.RGBA{R: 0x66, G: 0x66, B: 0xff, A: 100},
-	color.RGBA{R: 0x66, G: 0xcc, B: 0xff, A: 100},
-
-	color.RGBA{R: 0x99, G: 0x00, B: 0x00, A: 100},
-	color.RGBA{R: 0x99, G: 0x33, B: 0x33, A: 100},
-	color.RGBA{R: 0x99, G: 0x66, B: 0x99, A: 100},
-	color.RGBA{R: 0x99, G: 0x99, B: 0x33, A: 100},
-	color.RGBA{R: 0x99, G: 0xcc, B: 0x99, A: 100},
-
-	color.RGBA{R: 0xcc, G: 0x33, B: 0x33, A: 100},
-	color.RGBA{R: 0xcc, G: 0x66, B: 0x33, A: 100},
-	color.RGBA{R: 0xcc, G: 0x99, B: 0x66, A: 100},
-	color.RGBA{R: 0xcc, G: 0xcc, B: 0x00, A: 100},
-	color.RGBA{R: 0xcc, G: 0xcc, B: 0x66, A: 100},
-
-	color.RGBA{R: 0xff, G: 0x00, B: 0x00, A: 100},
-	color.RGBA{R: 0xff, G: 0x00, B: 0xff, A: 100},
-	color.RGBA{R: 0xff, G: 0x66, B: 0x33, A: 100},
-	color.RGBA{R: 0xff, G: 0x99, B: 0x33, A: 100},
-	color.RGBA{R: 0xff, G: 0xcc, B: 0x66, A: 100},
-	color.RGBA{R: 0xff, G: 0xcc, B: 0xcc, A: 100},
-}
-
 // Identicon 用于产生统一尺寸的头像
 //
 // 可以根据用户提供的数据，经过一定的算法，自动产生相应的图案和颜色。
@@ -80,24 +33,24 @@ type Identicon struct {
 	backColor  color.Color
 	size       int
 	rect       image.Rectangle
+	hash       hash.Hash32
 
 	// style v2
-	hash         hash.Hash32
 	bitsPerPoint int
 }
 
 // S1 采用 style1 风格的头像
 //
-// 背景为透明，前景由 forColors 指定；
+// 背景为透明，前景由 image/color/palette.WebSafe 指定；
 func S1(size int) *Identicon {
-	return New(Style1, size, color.Transparent, foreColors...)
+	return New(Style1, size, color.Transparent, palette.WebSafe...)
 }
 
 // S2 采用 style2 风格的头像
 //
-// 背景为透明，前景由 forColors 指定；
+// 背景为透明，前景由 image/color/palette.WebSafe 指定；
 func S2(size int) *Identicon {
-	return New(Style2, size, color.Transparent, foreColors...)
+	return New(Style2, size, color.Transparent, palette.WebSafe...)
 }
 
 // New 声明一个 Identicon 实例
