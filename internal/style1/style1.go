@@ -10,16 +10,13 @@ import (
 
 // DrawBlocks 将九个方格都填上内容
 //
-// p 为画板；
-// c 为中间方格的填充函数；
-// b1、b2 为边上 8 格的填充函数；
-// b1Angle 和 b2Angle 为 b1、b2 的起始旋转角度。
-func DrawBlocks(p *image.Paletted, size, c, b1, b2, b1Angle, b2Angle int, fc color.Color) {
-	b1 = b1 % len(blocks)
-	b2 = b2 % len(blocks)
-	c = c % len(centerBlocks)
-	b1Angle = b1Angle % 4
-	b2Angle = b2Angle % 4
+// sum 由 hash 计算出的随机数；
+func DrawBlocks(p *image.Paletted, size int, sum uint32, fc color.Color) {
+	b1 := int(sum&0x00_00_00_ff) % len(blocks)
+	b2 := int(sum&0x00_00_ff_00) % len(blocks)
+	c := int(sum&0x00_ff_00_00) % len(centerBlocks)
+	b1Angle := int(sum&0x0f_00_00_00) % 4
+	b2Angle := int(sum&0xf0_00_00_00) % 4
 
 	cc := centerBlocks[c]
 	bb1 := blocks[b1]

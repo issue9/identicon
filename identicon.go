@@ -9,7 +9,6 @@ import (
 	"image"
 	"image/color"
 	"math"
-	"math/bits"
 	"math/rand"
 	"strconv"
 
@@ -105,54 +104,9 @@ func (i *Identicon) Make(data []byte) image.Image {
 	}
 }
 
-func (i *Identicon) style2(sum uint32) image.Image {
-	lines := matrix(sum)
-	fc := sum % uint32(len(i.foreColors))
-	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
-
-	var yBase, xBase int
-	for y := 0; y < 8; y++ {
-		line := lines[y]
-		for yy := 0; yy < i.bitsPerPoint; yy++ {
-			for x := 0; x < 8; x++ {
-				var index uint8
-				if value := uint8(0b1000_0000 >> x); value&line == value {
-					index = 1
-				}
-
-				for xx := 0; xx < i.bitsPerPoint; xx++ {
-					p.SetColorIndex(xBase+xx, yBase+yy, index)
-				}
-
-				xBase += i.bitsPerPoint
-			}
-			xBase = 0
-		} // end yy
-		yBase += i.bitsPerPoint
-	}
-
-	return p
-}
-
-func matrix(v uint32) []uint8 {
-	ret := make([]uint8, 8)
-	for i := 0; i < 8; i++ {
-		vv := uint8((v >> (i * 4) & 0x0f))
-		vv <<= 4
-		ret[i] = vv + bits.Reverse8(vv)
-	}
-	return ret
-}
-
 func (i *Identicon) style1(sum uint32) image.Image {
-	b1 := int(sum & 0x00_00_00_ff)
-	b2 := int(sum & 0x00_00_ff_00)
-	c := int(sum & 0x00_ff_00_00)
-	b1Angle := int(sum & 0x0f_00_00_00)
-	b2Angle := int(sum & 0xf0_00_00_00)
 	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
-
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
-	style1.DrawBlocks(p, i.size, c, b1, b2, b1Angle, b2Angle, i.foreColors[fc])
+	style1.DrawBlocks(p, i.size, sum, i.foreColors[fc])
 	return p
 }

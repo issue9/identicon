@@ -29,13 +29,13 @@
 // 值为 1 表示有前景色，为 0 表示没有背景色，同时镜像到右边。
 //
 //  // 根据用户访问的 IP ，为其生成一张头像
-//  img := identicon.Make(V2, 128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
+//  img := identicon.Make(Style2, 128, color.NRGBA{},color.NRGBA{}, []byte("192.168.1.1"))
 //  fi, _ := os.Create("/tmp/u1.png")
 //  png.Encode(fi, img)
 //  fi.Close()
 //
 //  // 或者
-//  ii := identicon.New(V1, 128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
+//  ii := identicon.New(Style1, 128, color.NRGBA{}, color.NRGBA{}, color.NRGBA{})
 //  img := ii.Make([]byte("192.168.1.1"))
 //  img = ii.Make([]byte("192.168.1.2"))
 //
