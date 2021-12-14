@@ -10,7 +10,7 @@
 
 提供了两种风格的头像数据，其中 V2 风格更加的像素风，且性能也更佳。
 
-v1
+style1
 
 ![v1.1](screenshot/v1-1.png)
 ![v1.2](screenshot/v1-2.png)
@@ -18,7 +18,7 @@ v1
 ![v1.4](screenshot/v1-4.png)
 ![v1.5](screenshot/v1-5.png)
 
-v2
+style2
 
 ![v2.1](screenshot/v2-1.png)
 ![v2.2](screenshot/v2-2.png)

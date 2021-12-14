@@ -13,7 +13,7 @@ import (
 func BenchmarkMake(b *testing.B) {
 	a := assert.New(b, false)
 	for i := 0; i < b.N; i++ {
-		img := Make(V1, size, back, fore, []byte("Make"))
+		img := Make(Style1, size, back, fore, []byte("Make"))
 		a.NotNil(img)
 	}
 }
@@ -21,7 +21,7 @@ func BenchmarkMake(b *testing.B) {
 func BenchmarkIdenticon_Make_v1(b *testing.B) {
 	a := assert.New(b, false)
 
-	ii := New(V1, size, back, fores...)
+	ii := New(Style1, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
@@ -34,7 +34,7 @@ func BenchmarkIdenticon_Rand_v2(b *testing.B) {
 	a := assert.New(b, false)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	ii := New(V1, size, back, fores...)
+	ii := New(Style1, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {
@@ -46,7 +46,7 @@ func BenchmarkIdenticon_Rand_v2(b *testing.B) {
 func BenchmarkIdenticon_Make_v2(b *testing.B) {
 	a := assert.New(b, false)
 
-	ii := New(V2, size, back, fores...)
+	ii := New(Style2, size, back, fores...)
 	a.NotNil(ii)
 
 	for i := 0; i < b.N; i++ {

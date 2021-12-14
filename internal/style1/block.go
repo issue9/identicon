@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-package identicon
+package style1
 
 import "image"
 

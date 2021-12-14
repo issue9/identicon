@@ -12,16 +12,18 @@ import (
 	"math/bits"
 	"math/rand"
 	"strconv"
+
+	"github.com/issue9/identicon/internal/style1"
 )
 
 type Style int8
 
 const (
-	V1 Style = iota + 1 // 旧版本风格
-	V2                  // v2 风格，性能略高于 V1
+	Style1 Style = iota + 1 // 旧版本风格
+	Style2                  // v2 风格，性能略高于 V1
 )
 
-const v1MinSize = 24
+const style1MinSize = 24
 
 // Identicon 用于产生统一尺寸的头像
 //
@@ -38,6 +40,14 @@ type Identicon struct {
 	bitsPerPoint int
 }
 
+// Make 根据 data 数据产生一张唯一性的头像图片
+//
+// size 头像的大小。
+// back, fore 头像的背景和前景色。
+func Make(style Style, size int, back, fore color.Color, data []byte) image.Image {
+	return New(style, size, back, fore).Make(data)
+}
+
 // New 声明一个 Identicon 实例
 //
 // style 图片风格；
@@ -50,11 +60,11 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 	}
 
 	switch style {
-	case V1:
-		if size < v1MinSize {
-			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, v1MinSize))
+	case Style1:
+		if size < style1MinSize {
+			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, style1MinSize))
 		}
-	case V2:
+	case Style2:
 		if size%8 != 0 {
 			panic(fmt.Sprintf("参数 size 的值 %d 必须为 8 的倍数", size))
 		}
@@ -86,16 +96,16 @@ func (i *Identicon) Make(data []byte) image.Image {
 	i.hash.Reset()
 
 	switch i.style {
-	case V1:
-		return i.v1(sum)
-	case V2:
-		return i.v2(sum)
+	case Style1:
+		return i.style1(sum)
+	case Style2:
+		return i.style2(sum)
 	default:
 		panic("无效的 style")
 	}
 }
 
-func (i *Identicon) v2(sum uint32) image.Image {
+func (i *Identicon) style2(sum uint32) image.Image {
 	lines := matrix(sum)
 	fc := sum % uint32(len(i.foreColors))
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
@@ -134,63 +144,15 @@ func matrix(v uint32) []uint8 {
 	return ret
 }
 
-func (i *Identicon) v1(sum uint32) image.Image {
-	b1 := int(sum&0x00_00_00_ff) % len(blocks)
-	b2 := int(sum&0x00_00_ff_00) % len(blocks)
-	c := int(sum&0x00_ff_00_00) % len(centerBlocks)
-	b1Angle := int(sum&0x0f_00_00_00) % 4
-	b2Angle := int(sum&0xf0_00_00_00) % 4
+func (i *Identicon) style1(sum uint32) image.Image {
+	b1 := int(sum & 0x00_00_00_ff)
+	b2 := int(sum & 0x00_00_ff_00)
+	c := int(sum & 0x00_ff_00_00)
+	b1Angle := int(sum & 0x0f_00_00_00)
+	b2Angle := int(sum & 0xf0_00_00_00)
 	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
 
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
-	drawBlocks(p, i.size, centerBlocks[c], blocks[b1], blocks[b2], b1Angle, b2Angle)
+	style1.DrawBlocks(p, i.size, c, b1, b2, b1Angle, b2Angle, i.foreColors[fc])
 	return p
-}
-
-// Make 根据 data 数据产生一张唯一性的头像图片
-//
-// size 头像的大小。
-// back, fore 头像的背景和前景色。
-func Make(style Style, size int, back, fore color.Color, data []byte) image.Image {
-	return New(style, size, back, fore).Make(data)
-}
-
-// 将九个方格都填上内容。
-// p 为画板；
-// c 为中间方格的填充函数；
-// b1、b2 为边上 8 格的填充函数；
-// b1Angle 和 b2Angle 为 b1、b2 的起始旋转角度。
-func drawBlocks(p *image.Paletted, size int, c, b1, b2 blockFunc, b1Angle, b2Angle int) {
-	incr := func(a int) int {
-		if a >= 3 {
-			return 0
-		}
-		a++
-		return a
-	}
-
-	padding := (size % 6) / 2 // 不能除尽的，边上留白。
-
-	blockSize := size / 3
-	twoBlockSize := 2 * blockSize
-
-	c(p, blockSize+padding, blockSize+padding, blockSize, 0)
-
-	b1(p, 0+padding, 0+padding, blockSize, b1Angle)
-	b2(p, blockSize+padding, 0+padding, blockSize, b2Angle)
-
-	b1Angle = incr(b1Angle)
-	b2Angle = incr(b2Angle)
-	b1(p, twoBlockSize+padding, 0+padding, blockSize, b1Angle)
-	b2(p, twoBlockSize+padding, blockSize+padding, blockSize, b2Angle)
-
-	b1Angle = incr(b1Angle)
-	b2Angle = incr(b2Angle)
-	b1(p, twoBlockSize+padding, twoBlockSize+padding, blockSize, b1Angle)
-	b2(p, blockSize+padding, twoBlockSize+padding, blockSize, b2Angle)
-
-	b1Angle = incr(b1Angle)
-	b2Angle = incr(b2Angle)
-	b1(p, 0+padding, twoBlockSize+padding, blockSize, b1Angle)
-	b2(p, 0+padding, blockSize+padding, blockSize, b2Angle)
 }

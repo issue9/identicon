@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-package identicon
+package style1
 
 var (
 	// 4 个元素分别表示 cos(0),cos(90),cos(180),cos(270)
