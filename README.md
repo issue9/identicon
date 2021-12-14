@@ -42,7 +42,7 @@ img = ii.Make([]byte("192.168.1.2"))
 ## 安装
 
 ```shell
-go get github.com/issue9/identicon
+go get github.com/issue9/identicon/v2
 ```
 
 ## 版权
