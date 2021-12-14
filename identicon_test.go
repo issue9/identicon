@@ -34,7 +34,7 @@ func TestMake(t *testing.T) {
 	}
 }
 
-func TestIdenticon_Make_v1(t *testing.T) {
+func TestIdenticon_Make_style1(t *testing.T) {
 	a := assert.New(t, false)
 
 	ii := S1(size)
@@ -44,14 +44,14 @@ func TestIdenticon_Make_v1(t *testing.T) {
 		img := ii.Make([]byte("identicon-" + strconv.Itoa(i)))
 		a.NotNil(img)
 
-		fi, err := os.Create("./testdata/v1-identicon-make" + strconv.Itoa(i) + ".png")
+		fi, err := os.Create("./testdata/s1-identicon-make" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)
 		a.NotError(png.Encode(fi, img))
 		a.NotError(fi.Close()) // 关闭文件
 	}
 }
 
-func TestIdenticon_Rand_v1(t *testing.T) {
+func TestIdenticon_Rand_style1(t *testing.T) {
 	a := assert.New(t, false)
 
 	ii := S1(size)
@@ -62,7 +62,24 @@ func TestIdenticon_Rand_v1(t *testing.T) {
 		img := ii.Rand(r)
 		a.NotNil(img)
 
-		fi, err := os.Create("./testdata/v1-identicon-rand-" + strconv.Itoa(i) + ".png")
+		fi, err := os.Create("./testdata/s1-identicon-rand-" + strconv.Itoa(i) + ".png")
+		a.NotError(err).NotNil(fi)
+		a.NotError(png.Encode(fi, img))
+		a.NotError(fi.Close()) // 关闭文件
+	}
+}
+
+func TestIdenticon_Make_style2(t *testing.T) {
+	a := assert.New(t, false)
+
+	ii := S2(size)
+	a.NotNil(ii)
+
+	for i := 0; i < 20; i++ {
+		img := ii.Make([]byte("identicon-" + strconv.Itoa(i)))
+		a.NotNil(img)
+
+		fi, err := os.Create("./testdata/s2-identicon-make" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)
 		a.NotError(png.Encode(fi, img))
 		a.NotError(fi.Close()) // 关闭文件

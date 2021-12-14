@@ -17,7 +17,7 @@ _test
 #osx
 .DS_Store
 
-/testdata/*.png
+/**/testdata/*.png
 
 .idea
 .vscode

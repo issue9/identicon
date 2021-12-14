@@ -21,18 +21,17 @@ var (
 
 // 依次画出各个网络的图像。
 func TestBlocks(t *testing.T) {
+	a := assert.New(t, false)
 	p := []color.Color{back, fore}
 
-	a := assert.New(t, false)
-
 	for k, v := range blocks {
-		img := image.NewPaletted(image.Rect(0, 0, size*4, size), p) // 横向4张图片大小
+		img := image.NewPaletted(image.Rect(0, 0, size*4, size), p) // 横向 4 张图片大小
 
 		for i := 0; i < 4; i++ {
 			v(img, i*size, 0, size, i)
 		}
 
-		fi, err := os.Create("../../testdata/block-" + strconv.Itoa(k) + ".png")
+		fi, err := os.Create("./testdata/block-" + strconv.Itoa(k) + ".png")
 		a.NotError(err).NotNil(fi)
 		a.NotError(png.Encode(fi, img))
 		a.NotError(fi.Close()) // 关闭文件
@@ -47,7 +46,7 @@ func TestDrawBlocks(t *testing.T) {
 		p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
 		DrawBlocks(p, size, uint32(11132323+i))
 
-		fi, err := os.Create("../../testdata/draw-" + strconv.Itoa(i) + ".png")
+		fi, err := os.Create("./testdata/draw-" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)
 		a.NotError(png.Encode(fi, p))
 		a.NotError(fi.Close()) // 关闭文件

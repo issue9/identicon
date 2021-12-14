@@ -13,6 +13,7 @@ import (
 	"strconv"
 
 	"github.com/issue9/identicon/v2/internal/style1"
+	"github.com/issue9/identicon/v2/internal/style2"
 )
 
 type Style int8
@@ -146,21 +147,19 @@ func (i *Identicon) Make(data []byte) image.Image {
 	sum := i.hash.Sum32()
 	i.hash.Reset()
 
+	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
+	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
+
 	switch i.style {
 	case Style1:
-		return i.style1(sum)
+		style1.DrawBlocks(p, i.size, sum)
+		return p
 	case Style2:
-		return i.style2(sum)
+		style2.Draw(p, i.size, i.bitsPerPoint, sum)
+		return p
 	default:
 		panic("无效的 style")
 	}
-}
-
-func (i *Identicon) style1(sum uint32) image.Image {
-	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
-	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
-	style1.DrawBlocks(p, i.size, sum)
-	return p
 }
 
 // Make 根据 data 数据产生一张唯一性的头像图片
