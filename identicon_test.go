@@ -15,10 +15,9 @@ import (
 )
 
 var (
-	back  = color.RGBA{R: 255, G: 0, B: 0, A: 100}
-	fore  = color.RGBA{R: 0, G: 255, B: 255, A: 100}
-	fores = []color.Color{color.Black, color.RGBA{R: 200, G: 2, B: 5, A: 100}, color.RGBA{R: 2, G: 200, B: 5, A: 100}}
-	size  = 128
+	back = color.RGBA{R: 255, G: 0, B: 0, A: 100}
+	fore = color.RGBA{R: 0, G: 255, B: 255, A: 100}
+	size = 128
 )
 
 func TestMake(t *testing.T) {
@@ -38,7 +37,7 @@ func TestMake(t *testing.T) {
 func TestIdenticon_Make_v1(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii := New(Style1, size, back, fores...)
+	ii := S1(size)
 	a.NotNil(ii)
 
 	for i := 0; i < 20; i++ {
@@ -55,7 +54,7 @@ func TestIdenticon_Make_v1(t *testing.T) {
 func TestIdenticon_Rand_v1(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii := New(Style1, size, back, fores...)
+	ii := S1(size)
 	a.NotNil(ii)
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 

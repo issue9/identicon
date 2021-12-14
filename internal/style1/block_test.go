@@ -45,7 +45,7 @@ func TestDrawBlocks(t *testing.T) {
 
 	for i := 0; i < 20; i++ {
 		p := image.NewPaletted(image.Rect(0, 0, size, size), []color.Color{back, fore})
-		DrawBlocks(p, size, uint32(11132323), color.Opaque)
+		DrawBlocks(p, size, uint32(11132323+i))
 
 		fi, err := os.Create("../../testdata/draw-" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)

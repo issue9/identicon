@@ -19,10 +19,56 @@ type Style int8
 
 const (
 	Style1 Style = iota + 1 // 旧版本风格
-	Style2                  // v2 风格，性能略高于 V1
+	Style2                  // Style2 风格，性能略高于 Style1
 )
 
-const style1MinSize = 24
+var foreColors = []color.Color{
+	color.RGBA{R: 0x00, G: 0x33, B: 0x00, A: 100},
+	color.RGBA{R: 0x00, G: 0x33, B: 0x33, A: 100},
+	color.RGBA{R: 0x00, G: 0x33, B: 0x66, A: 100},
+	color.RGBA{R: 0x00, G: 0x33, B: 0xcc, A: 100},
+	color.RGBA{R: 0x00, G: 0x66, B: 0x00, A: 100},
+	color.RGBA{R: 0x00, G: 0x66, B: 0x66, A: 100},
+	color.RGBA{R: 0x00, G: 0x66, B: 0x99, A: 100},
+	color.RGBA{R: 0x00, G: 0x66, B: 0xcc, A: 100},
+	color.RGBA{R: 0x00, G: 0x99, B: 0x00, A: 100},
+	color.RGBA{R: 0x00, G: 0x99, B: 0x33, A: 100},
+	color.RGBA{R: 0x00, G: 0x99, B: 0xcc, A: 100},
+	color.RGBA{R: 0x00, G: 0x99, B: 0xff, A: 100},
+	color.RGBA{R: 0x00, G: 0xcc, B: 0x00, A: 100},
+	color.RGBA{R: 0x00, G: 0xcc, B: 0x99, A: 100},
+
+	color.RGBA{R: 0x33, G: 0x33, B: 0x66, A: 100},
+	color.RGBA{R: 0x33, G: 0x99, B: 0x00, A: 100},
+	color.RGBA{R: 0x33, G: 0xcc, B: 0xff, A: 100},
+
+	color.RGBA{R: 0x66, G: 0x00, B: 0x00, A: 100},
+	color.RGBA{R: 0x66, G: 0x00, B: 0xcc, A: 100},
+	color.RGBA{R: 0x66, G: 0x33, B: 0x00, A: 100},
+	color.RGBA{R: 0x66, G: 0x66, B: 0x00, A: 100},
+	color.RGBA{R: 0x66, G: 0x66, B: 0x99, A: 100},
+	color.RGBA{R: 0x66, G: 0x66, B: 0xff, A: 100},
+	color.RGBA{R: 0x66, G: 0xcc, B: 0xff, A: 100},
+
+	color.RGBA{R: 0x99, G: 0x00, B: 0x00, A: 100},
+	color.RGBA{R: 0x99, G: 0x33, B: 0x33, A: 100},
+	color.RGBA{R: 0x99, G: 0x66, B: 0x99, A: 100},
+	color.RGBA{R: 0x99, G: 0x99, B: 0x33, A: 100},
+	color.RGBA{R: 0x99, G: 0xcc, B: 0x99, A: 100},
+
+	color.RGBA{R: 0xcc, G: 0x33, B: 0x33, A: 100},
+	color.RGBA{R: 0xcc, G: 0x66, B: 0x33, A: 100},
+	color.RGBA{R: 0xcc, G: 0x99, B: 0x66, A: 100},
+	color.RGBA{R: 0xcc, G: 0xcc, B: 0x00, A: 100},
+	color.RGBA{R: 0xcc, G: 0xcc, B: 0x66, A: 100},
+
+	color.RGBA{R: 0xff, G: 0x00, B: 0x00, A: 100},
+	color.RGBA{R: 0xff, G: 0x00, B: 0xff, A: 100},
+	color.RGBA{R: 0xff, G: 0x66, B: 0x33, A: 100},
+	color.RGBA{R: 0xff, G: 0x99, B: 0x33, A: 100},
+	color.RGBA{R: 0xff, G: 0xcc, B: 0x66, A: 100},
+	color.RGBA{R: 0xff, G: 0xcc, B: 0xcc, A: 100},
+}
 
 // Identicon 用于产生统一尺寸的头像
 //
@@ -39,12 +85,18 @@ type Identicon struct {
 	bitsPerPoint int
 }
 
-// Make 根据 data 数据产生一张唯一性的头像图片
+// S1 采用 style1 风格的头像
 //
-// size 头像的大小。
-// back, fore 头像的背景和前景色。
-func Make(style Style, size int, back, fore color.Color, data []byte) image.Image {
-	return New(style, size, back, fore).Make(data)
+// 背景为透明，前景由 forColors 指定；
+func S1(size int) *Identicon {
+	return New(Style1, size, color.Transparent, foreColors...)
+}
+
+// S2 采用 style2 风格的头像
+//
+// 背景为透明，前景由 forColors 指定；
+func S2(size int) *Identicon {
+	return New(Style2, size, color.Transparent, foreColors...)
 }
 
 // New 声明一个 Identicon 实例
@@ -60,8 +112,8 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 
 	switch style {
 	case Style1:
-		if size < style1MinSize {
-			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, style1MinSize))
+		if size < style1.MinSize {
+			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, style1.MinSize))
 		}
 	case Style2:
 		if size%8 != 0 {
@@ -107,6 +159,14 @@ func (i *Identicon) Make(data []byte) image.Image {
 func (i *Identicon) style1(sum uint32) image.Image {
 	fc := int(sum&0xf0_f0_f0_f0) % len(i.foreColors)
 	p := image.NewPaletted(i.rect, []color.Color{i.backColor, i.foreColors[fc]})
-	style1.DrawBlocks(p, i.size, sum, i.foreColors[fc])
+	style1.DrawBlocks(p, i.size, sum)
 	return p
+}
+
+// Make 根据 data 数据产生一张唯一性的头像图片
+//
+// size 头像的大小。
+// back, fore 头像的背景和前景色。
+func Make(style Style, size int, back, fore color.Color, data []byte) image.Image {
+	return New(style, size, back, fore).Make(data)
 }

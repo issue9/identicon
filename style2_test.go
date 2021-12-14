@@ -14,7 +14,7 @@ import (
 func TestIdenticon_Make_v2(t *testing.T) {
 	a := assert.New(t, false)
 
-	ii := New(Style2, size, back, fores...)
+	ii := S2(size)
 	a.NotNil(ii)
 
 	for i := 0; i < 20; i++ {

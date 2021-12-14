@@ -30,9 +30,11 @@ func drawBlock(img *image.Paletted, x, y, size, angle int, points []int) {
 
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
+			var index uint8
 			if pointInPolygon(i, j, points) {
-				img.SetColorIndex(x+i, y+j, 1)
+				index = 1
 			}
+			img.SetColorIndex(x+i, y+j, index)
 		}
 	}
 }

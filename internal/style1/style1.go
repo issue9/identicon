@@ -3,15 +3,14 @@
 // Package style1 风格 1 的头像
 package style1
 
-import (
-	"image"
-	"image/color"
-)
+import "image"
+
+const MinSize = 24
 
 // DrawBlocks 将九个方格都填上内容
 //
 // sum 由 hash 计算出的随机数；
-func DrawBlocks(p *image.Paletted, size int, sum uint32, fc color.Color) {
+func DrawBlocks(p *image.Paletted, size int, sum uint32) {
 	b1 := int(sum&0x00_00_00_ff) % len(blocks)
 	b2 := int(sum&0x00_00_ff_00) % len(blocks)
 	c := int(sum&0x00_ff_00_00) % len(centerBlocks)
