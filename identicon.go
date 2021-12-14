@@ -117,8 +117,8 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 			panic(fmt.Sprintf("参数 size 的值 %d 不能小于 %d", size, style1.MinSize))
 		}
 	case Style2:
-		if size%8 != 0 {
-			panic(fmt.Sprintf("参数 size 的值 %d 必须为 8 的倍数", size))
+		if size%style2.Blocks != 0 {
+			panic(fmt.Sprintf("参数 size 的值 %d 必须为 %d 的倍数", size, style2.Blocks))
 		}
 	}
 
@@ -131,7 +131,7 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 
 		// hash
 		hash:         fnv.New32a(),
-		bitsPerPoint: size / 8,
+		bitsPerPoint: size / style2.Blocks,
 	}
 }
 
