@@ -81,9 +81,9 @@ func New(style Style, size int, back color.Color, fore ...color.Color) *Identico
 		backColor:  back,
 		size:       size,
 		rect:       image.Rect(0, 0, size, size),
+		hash:       fnv.New32a(),
 
 		// hash
-		hash:         fnv.New32a(),
 		bitsPerPoint: size / style2.Blocks,
 	}
 }

@@ -12,7 +12,7 @@ var (
 
 // 将 points 中的所有点，以 x,y 为原点旋转 angle 个角度。
 // angle 取值只能是 [0,1,2,3]，分别表示 [0，90，180，270]
-func rotate(points []int, x, y int, angle int) {
+func rotate(points []int, x, y, angle int) {
 	if angle < 0 || angle > 3 {
 		panic("rotate:参数 angle 必须 0、1、2 和 3 三值之一")
 	}
