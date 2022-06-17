@@ -30,7 +30,7 @@ func TestDraw(t *testing.T) {
 		fi, err := os.Create("./testdata/v2-" + strconv.Itoa(i) + ".png")
 		a.NotError(err).NotNil(fi)
 
-		Draw(img, size, size/Blocks, uint32(123222243)|(uint32(i)+11133))
+		Draw(img, size/Blocks, uint32(123222243)|(uint32(i)+11133))
 		a.NotError(png.Encode(fi, img))
 
 		a.NotError(fi.Close()) // 关闭文件
