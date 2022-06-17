@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+// Package style2 风格 2 的头像
 package style2
 
 import (
@@ -11,7 +12,7 @@ const Blocks = 8
 
 const half = Blocks / 2
 
-func Draw(p *image.Paletted, size, bitsPerPoint int, sum uint32) image.Image {
+func Draw(p *image.Paletted, bitsPerPoint int, sum uint32) image.Image {
 	lines := matrix(sum)
 
 	var yBase, xBase int

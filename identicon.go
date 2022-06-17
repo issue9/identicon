@@ -108,7 +108,7 @@ func (i *Identicon) Make(data []byte) image.Image {
 		style1.DrawBlocks(p, i.size, sum)
 		return p
 	case Style2:
-		style2.Draw(p, i.size, i.bitsPerPoint, sum)
+		style2.Draw(p, i.bitsPerPoint, sum)
 		return p
 	default:
 		panic("无效的 style")
